@@ -13,8 +13,16 @@ HitboxObject::HitboxObject(int width, int height, int x, int y, const Color &col
 }
 
 bool HitboxObject::colide(HitboxObject obj) {
+  if (
+    this->getBottom() > obj.getTop()
+  ) {
+    this->pushout(obj);
+    return true;
+  }
+  
   return false;
 }
 
 void HitboxObject::pushout(HitboxObject obj) {
+  this->setY(obj.getTop() - (this->getHeight()) / 2);
 }
