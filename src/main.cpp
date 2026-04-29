@@ -30,8 +30,6 @@ int main() {
   while (wc.processMessages()) {
     wc.redraw();
 
-    obj3.setY(obj3.getY() + 1);
-
     sleep_for(milliseconds(30));
   }
 
