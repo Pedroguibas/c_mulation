@@ -14,13 +14,13 @@ class WindowController {
 private:
   HINSTANCE m_hInstance;
   HWND m_hWnd;
-  vector<Object *> ol;
-  InputHandler ih;
+  vector<Object *> objectList;
+  InputHandler inputs;
 
   static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-  WindowController(int w, int h, vector<Object *> ol, InputHandler ih);
+  WindowController(int w, int h, vector<Object *> objectList, InputHandler inputs);
   ~WindowController();
 
   WindowController(const WindowController &) = delete;

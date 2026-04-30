@@ -1,6 +1,8 @@
 #include "objects/hitboxObject.h"
 #include "objects/object.h"
+#include "objects/entity.h"
 #include "window/windowController.h"
+#include "game/gameController.h"
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -15,39 +17,40 @@ int main() {
   Color c2(255, 0, 0);
 
   HitboxObject obj1(30, 30, 205, 304, c1, c2, 2);
-  HitboxObject testT(30, 30, 205, 154, c2, c1, 2);
-  HitboxObject testR(30, 30, 355, 304, c2, c1, 2);
-  HitboxObject testB(30, 30, 205, 454, c2, c1, 2);
-  HitboxObject testL(30, 30, 55, 304, c2, c1, 2);
+  Entity eT(30, 30, 205, 154, c2, c1, 2);
+  Entity eR(30, 30, 355, 304, c2, c1, 2);
+  Entity eB(30, 30, 205, 454, c2, c1, 2);
+  Entity eL(30, 30, 55, 304, c2, c1, 2);
 
-  vector<Object*> ol = {&obj1, &testT, &testR, &testB, &testL};
+  eT.setSpeedY(4);
+  eR.setSpeedX(-4);
+  eB.setSpeedY(-4);
+  eL.setSpeedX(4);
+
+  vector<Object*> objectList = {&obj1, &eT, &eR, &eB, &eL};
+  vector<HitboxObject*> hitboxList = {&obj1, &eT, &eR, &eB, &eL};
+  vector<Entity *> entityList = {&eT, &eR, &eB, &eL};
 
   InputHandler ih;
   ih.keyDown.insert({VK_SPACE, [&]() {
-                        testT.setY(testT.getY() - 150);
-                        testB.setY(testB.getY() + 150);
-                        testL.setX(testL.getX() - 150);
-                        testR.setX(testR.getX() + 150);
+                        eT.setSpeedY(eT.getSpeedY() * -1);
+                        eB.setSpeedY(eB.getSpeedY() * -1);
+                        eL.setSpeedX(eL.getSpeedX() * -1);
+                        eR.setSpeedX(eR.getSpeedX() * -1);
                       }});
 
   
 
-  WindowController wc(1080, 608, ol, ih);
+  WindowController wc(1080, 608, objectList, ih);
 
-  bool running = true;
+  GameController gc(objectList, hitboxList, entityList);
 
   while (wc.processMessages()) {
     wc.redraw();
 
-    testT.setY(testT.getY() + 4);
-    testB.setY(testB.getY() - 4);
-    testL.setX(testL.getX() + 4);
-    testR.setX(testR.getX() - 4);
+    gc.update();
 
-    testT.collide(obj1);
-    testR.collide(obj1);
-    testB.collide(obj1);
-    testL.collide(obj1);
+    gc.testCollisions();
 
     sleep_for(milliseconds(30));
   }

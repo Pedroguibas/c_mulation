@@ -37,8 +37,8 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
       SetTextColor(memDC, RGB(0, 255, 255));
 
-      for (int i = 0; i < self->ol.size(); i++) {
-        self->ol[i]->draw(memDC);
+      for (int i = 0; i < self->objectList.size(); i++) {
+        self->objectList[i]->draw(memDC);
       }
 
       BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
@@ -47,14 +47,14 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
     } break;
 
     case WM_KEYDOWN:
-      if (self->ih.keyDown.find(wParam) != self->ih.keyDown.end())
-        self->ih.keyDown[wParam]();
+      if (self->inputs.keyDown.find(wParam) != self->inputs.keyDown.end())
+        self->inputs.keyDown[wParam]();
 
       break;
 
     case WM_KEYUP:
-      if (self->ih.keyUp.find(wParam) != self->ih.keyUp.end())
-        self->ih.keyUp[wParam]();
+      if (self->inputs.keyUp.find(wParam) != self->inputs.keyUp.end())
+        self->inputs.keyUp[wParam]();
 
       break;
 
@@ -70,10 +70,10 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-WindowController::WindowController(int w, int h, vector<Object *> ol, InputHandler ih) : m_hInstance(GetModuleHandle(nullptr)), ih(ih) {
+WindowController::WindowController(int w, int h, vector<Object *> objectList, InputHandler inputs) : m_hInstance(GetModuleHandle(nullptr)), inputs(inputs) {
   width = w;
   height = h;
-  this->ol = ol;
+  this->objectList = objectList;
 
   const wchar_t *CLASS_NAME = L"Window Class";
 
