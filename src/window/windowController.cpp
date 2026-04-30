@@ -29,7 +29,7 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
       HBITMAP bitmap = CreateCompatibleBitmap(hdc, width, height);
       SelectObject(memDC, bitmap);
 
-      LPCWSTR txt = L"Jogo de física Básica";
+      LPCWSTR txt = L"C Mulation";
 
       SetTextColor(memDC, RGB(0, 255, 0));
       SetBkMode(memDC, TRANSPARENT);
@@ -37,16 +37,21 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
       SetTextColor(memDC, RGB(0, 255, 255));
 
-      self->ol->backToStart();
-
-      do {
-        self->ol->getData()->draw(memDC);
-      } while (self->ol->getNext());
+      for (int i = 0; i < self->ol.size(); i++) {
+        self->ol[i]->draw(memDC);
+      }
 
       BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
 
       EndPaint(hWnd, &ps);
     } break;
+
+    case WM_KEYDOWN:
+
+      if (self->ih.keyDown.find(wParam) != self->ih.keyDown.end())
+        self->ih.keyDown[wParam]();
+
+      break;
 
     case WM_CLOSE:
       DestroyWindow(hWnd);
@@ -60,7 +65,7 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-WindowController::WindowController(int w, int h, ObjectList *ol) : m_hInstance(GetModuleHandle(nullptr)) {
+WindowController::WindowController(int w, int h, vector<Object *> ol, InputHandler ih) : m_hInstance(GetModuleHandle(nullptr)), ih(ih) {
   width = w;
   height = h;
   this->ol = ol;
@@ -90,7 +95,7 @@ WindowController::WindowController(int w, int h, ObjectList *ol) : m_hInstance(G
   m_hWnd = CreateWindowEx(
       0,
       CLASS_NAME,
-      L"Física básica",
+      L"C Mulation",
       style,
       rect.left,
       rect.top,
