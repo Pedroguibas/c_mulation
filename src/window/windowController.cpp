@@ -40,19 +40,7 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
       self->ol->backToStart();
 
       do {
-        HBRUSH brush = CreateSolidBrush(RGB(self->ol->getData()->getColor().getR(), self->ol->getData()->getColor().getG(), self->ol->getData()->getColor().getB()));
-        HPEN pen = CreatePen(PS_SOLID, self->ol->getData()->getBorderThickness(), RGB(self->ol->getData()->getBorder().getR(), self->ol->getData()->getBorder().getG(), self->ol->getData()->getBorder().getB()));
-
-        HBRUSH oldBrush = (HBRUSH)SelectObject(memDC, brush);
-        HPEN oldPen = (HPEN)SelectObject(memDC, pen);
-
-        Rectangle(memDC, self->ol->getData()->getLeft(), self->ol->getData()->getTop(), self->ol->getData()->getRight(), self->ol->getData()->getBottom());
-
-        SelectObject(memDC, oldBrush);
-        SelectObject(memDC, oldPen);
-
-        DeleteObject(brush);
-        DeleteObject(pen);
+        self->ol->getData()->draw(memDC);
       } while (self->ol->getNext());
 
       BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);

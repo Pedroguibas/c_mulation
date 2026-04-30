@@ -3,6 +3,7 @@
 #define OBJECT_H
 
 #include "color.h"
+#include <windows.h>
 
 class Object {
 private:
@@ -47,6 +48,8 @@ public:
   Color getBorder();
   void setBorderThickness(int t);
   int getBorderThickness();
+
+  void draw(HDC canvas);
 };
 
 #endif

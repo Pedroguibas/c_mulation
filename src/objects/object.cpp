@@ -99,3 +99,26 @@ void Object::setBorderThickness(int t) {
 int Object::getBorderThickness() {
   return this->borderThickness;
 }
+
+void Object::draw(HDC canvas) {
+  HBRUSH brush = CreateSolidBrush(RGB(this->getColor().getR(), this->getColor().getG(), this->getColor().getB()));
+  HPEN pen = CreatePen(PS_SOLID, this->getBorderThickness(), RGB(this->getBorder().getR(), this->getBorder().getG(), this->getBorder().getB()));
+
+  HBRUSH oldBrush = (HBRUSH)SelectObject(canvas, brush);
+  HPEN oldPen = (HPEN)SelectObject(canvas, pen);
+
+  int borderDif = this->borderThickness / 2;
+
+  Rectangle(
+      canvas,
+      this->getLeft() + borderDif,
+      this->getTop() + borderDif,
+      this->getRight() - borderDif,
+      this->getBottom() - borderDif);
+
+  SelectObject(canvas, oldBrush);
+  SelectObject(canvas, oldPen);
+
+  DeleteObject(brush);
+  DeleteObject(pen);
+}
