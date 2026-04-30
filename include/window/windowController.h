@@ -4,19 +4,23 @@
 #define UNICODE
 #define _UNICODE
 
-#include "objects/objectList.h"
+#include "objects/object.h"
+#include "window/inputHandler.h"
+#include <vector>
 #include <windows.h>
+using std::vector;
 
 class WindowController {
 private:
   HINSTANCE m_hInstance;
   HWND m_hWnd;
-  ObjectList *ol;
+  vector<Object *> ol;
+  InputHandler ih;
 
   static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-  WindowController(int w, int h, ObjectList *ol);
+  WindowController(int w, int h, vector<Object *> ol, InputHandler ih);
   ~WindowController();
 
   WindowController(const WindowController &) = delete;

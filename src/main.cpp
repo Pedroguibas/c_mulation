@@ -1,6 +1,5 @@
 #include "objects/hitboxObject.h"
 #include "objects/object.h"
-#include "objects/objectList.h"
 #include "window/windowController.h"
 #include <chrono>
 #include <iostream>
@@ -21,13 +20,19 @@ int main() {
   HitboxObject testB(30, 30, 205, 454, c2, c1, 2);
   HitboxObject testL(30, 30, 55, 304, c2, c1, 2);
 
-  ObjectList ol(&obj1);
-  ol.append(&testT);
-  ol.append(&testR);
-  ol.append(&testB);
-  ol.append(&testL);
+  vector<Object*> ol = {&obj1, &testT, &testR, &testB, &testL};
 
-  WindowController wc(1080, 608, &ol);
+  InputHandler ih;
+  ih.keyDown.insert({VK_SPACE, [&]() {
+                        testT.setY(testT.getY() - 150);
+                        testB.setY(testB.getY() + 150);
+                        testL.setX(testL.getX() - 150);
+                        testR.setX(testR.getX() + 150);
+                      }});
+
+  
+
+  WindowController wc(1080, 608, ol, ih);
 
   bool running = true;
 

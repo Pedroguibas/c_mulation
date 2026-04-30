@@ -10,9 +10,9 @@ public:
   HitboxObject(int width, int height, int x, int y, const Color &color);
   HitboxObject(int width, int height, int x, int y, const Color &color, const Color &border, int borderThickness);
 
-  bool collide(HitboxObject obj);
+  bool collide(HitboxObject &obj);
 
-  void pushout(HitboxObject obj);
+  void pushout(HitboxObject &obj);
 };
 
 #endif
