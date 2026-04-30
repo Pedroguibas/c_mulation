@@ -9,7 +9,7 @@ using std::unordered_map;
 class InputHandler {
 public:
   unordered_map<int, function<void()>> keyDown;
-  InputHandler() {}
+  unordered_map<int, function<void()>> keyUp;
 };
 
 #endif

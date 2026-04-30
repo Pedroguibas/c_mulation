@@ -47,9 +47,14 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
     } break;
 
     case WM_KEYDOWN:
-
       if (self->ih.keyDown.find(wParam) != self->ih.keyDown.end())
         self->ih.keyDown[wParam]();
+
+      break;
+
+    case WM_KEYUP:
+      if (self->ih.keyUp.find(wParam) != self->ih.keyUp.end())
+        self->ih.keyUp[wParam]();
 
       break;
 

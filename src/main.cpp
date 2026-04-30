@@ -20,17 +20,19 @@ int main() {
   HitboxObject testB(30, 30, 205, 454, c2, c1, 2);
   HitboxObject testL(30, 30, 55, 304, c2, c1, 2);
 
-  vector<Object *> ol = {&obj1, &testT, &testR, &testB, &testL};
+  vector<Object*> ol = {&obj1, &testT, &testR, &testB, &testL};
 
-  InputHandler *ih = new InputHandler();
-  ih->keyDown.insert({VK_SPACE, [&]() {
+  InputHandler ih;
+  ih.keyDown.insert({VK_SPACE, [&]() {
                         testT.setY(testT.getY() - 150);
                         testB.setY(testB.getY() + 150);
                         testL.setX(testL.getX() - 150);
                         testR.setX(testR.getX() + 150);
                       }});
 
-  WindowController wc(1080, 608, ol, *ih);
+  
+
+  WindowController wc(1080, 608, ol, ih);
 
   bool running = true;
 
@@ -49,8 +51,6 @@ int main() {
 
     sleep_for(milliseconds(30));
   }
-
-  delete ih;
 
   return 0;
 }

@@ -15,7 +15,7 @@ HitboxObject::HitboxObject(int width, int height, int x, int y, const Color &col
 HitboxObject::HitboxObject(int width, int height, int x, int y, const Color &color, const Color &border, int borderThickness) : Object(width, height, x, y, color, border, borderThickness) {
 }
 
-bool HitboxObject::collide(HitboxObject obj) {
+bool HitboxObject::collide(HitboxObject &obj) {
   if (
       (this->getTop() < obj.getBottom() && this->getBottom() > obj.getTop()) &&
       (this->getLeft() < obj.getRight() && this->getRight() > obj.getLeft())) {
@@ -26,7 +26,7 @@ bool HitboxObject::collide(HitboxObject obj) {
   return false;
 }
 
-void HitboxObject::pushout(HitboxObject obj) {
+void HitboxObject::pushout(HitboxObject &obj) {
   int xOverlap = min(this->getRight(), obj.getRight()) - max(this->getLeft(), obj.getLeft());
   int yOverlap = min(this->getBottom(), obj.getBottom()) - max(this->getTop(), obj.getTop());
   if (xOverlap < yOverlap) {
