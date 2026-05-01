@@ -29,6 +29,11 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
       HBITMAP bitmap = CreateCompatibleBitmap(hdc, width, height);
       SelectObject(memDC, bitmap);
 
+      HBRUSH bgBrush = CreateSolidBrush(RGB(50, 50, 50));
+      RECT rect = {0, 0, width, height};
+      FillRect(memDC, &rect, bgBrush);
+      DeleteObject(bgBrush);
+
       LPCWSTR txt = L"C Mulation";
 
       SetTextColor(memDC, RGB(0, 255, 0));

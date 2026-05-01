@@ -12,7 +12,7 @@ public:
 
   bool collide(HitboxObject &obj);
 
-  void pushout(HitboxObject &obj);
+  virtual void pushout(HitboxObject &obj);
 };
 
 #endif
