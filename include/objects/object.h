@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef OBJECT_H
 #define OBJECT_H
 
@@ -30,10 +31,10 @@ public:
   void setHeight(int h);
   int getHeight();
 
-  void setX(int x);
+  virtual void setX(int x);
   int getX();
 
-  void setY(int y);
+  virtual void setY(int y);
   int getY();
 
   int getTop();

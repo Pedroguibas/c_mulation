@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef WINDOW_CONTROLLER_H
 #define WINDOW_CONTROLLER_H
 #define UNICODE

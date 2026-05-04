@@ -48,6 +48,9 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
       BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
 
+      DeleteObject(bitmap);
+      DeleteDC(memDC);
+
       EndPaint(hWnd, &ps);
     } break;
 

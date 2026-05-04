@@ -17,8 +17,8 @@ HitboxObject::HitboxObject(int width, int height, int x, int y, const Color &col
 
 bool HitboxObject::collide(HitboxObject &obj) {
   if (
-      (this->getTop() < obj.getBottom() && this->getBottom() > obj.getTop()) &&
-      (this->getLeft() < obj.getRight() && this->getRight() > obj.getLeft())) {
+      (this->getTop() <= obj.getBottom() && this->getBottom() >= obj.getTop()) &&
+      (this->getLeft() <= obj.getRight() && this->getRight() >= obj.getLeft())) {
     this->pushout(obj);
     return true;
   }
