@@ -1,3 +1,4 @@
+#include "game/camera.h"
 #include "game/gameController.h"
 #include "objects/entity.h"
 #include "objects/hitboxObject.h"
@@ -21,6 +22,8 @@ int main() {
   HitboxObject ground(1100, 200, 540, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
   Entity block(40, 40, 540, 30, purple);
+
+  Camera cam(60, 918, 547, 162, &block);
 
   block.setMaxSpeedX(500);
 
@@ -47,9 +50,9 @@ int main() {
                      block.setMovingRight(false);
                    }});
 
-  WindowController wc(1080, 608, objectList, ih);
+  WindowController wc(1080, 608, objectList, ih, &cam);
 
-  GameController gc(objectList, hitboxList, entityList, 1250);
+  GameController gc(objectList, hitboxList, entityList, &cam, 1250);
   gc.setLastTick();
 
   while (wc.processMessages()) {
