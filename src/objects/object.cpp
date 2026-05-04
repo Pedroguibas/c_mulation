@@ -1,4 +1,5 @@
 #include "objects/object.h"
+#include "game/camera.h"
 
 Object::Object(int width, int height) : color(255, 255, 255), border(255, 255, 255) {
   this->setWidth(width);
@@ -115,6 +116,29 @@ void Object::draw(HDC canvas) {
       this->getTop() + borderDif,
       this->getRight() - borderDif,
       this->getBottom() - borderDif);
+
+  SelectObject(canvas, oldBrush);
+  SelectObject(canvas, oldPen);
+
+  DeleteObject(brush);
+  DeleteObject(pen);
+}
+
+void Object::draw(HDC canvas, Camera *cam) {
+  HBRUSH brush = CreateSolidBrush(RGB(this->getColor().getR(), this->getColor().getG(), this->getColor().getB()));
+  HPEN pen = CreatePen(PS_SOLID, this->getBorderThickness(), RGB(this->getBorder().getR(), this->getBorder().getG(), this->getBorder().getB()));
+
+  HBRUSH oldBrush = (HBRUSH)SelectObject(canvas, brush);
+  HPEN oldPen = (HPEN)SelectObject(canvas, pen);
+
+  int borderDif = this->borderThickness / 2;
+
+  Rectangle(
+      canvas,
+      this->getLeft() + borderDif - cam->getX(),
+      this->getTop() + borderDif - cam->getY(),
+      this->getRight() - borderDif - cam->getX(),
+      this->getBottom() - borderDif - cam->getY());
 
   SelectObject(canvas, oldBrush);
   SelectObject(canvas, oldPen);

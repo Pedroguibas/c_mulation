@@ -6,6 +6,8 @@
 #include "color.h"
 #include <windows.h>
 
+class Camera;
+
 class Object {
 private:
   int width;
@@ -51,6 +53,7 @@ public:
   int getBorderThickness();
 
   void draw(HDC canvas);
+  void draw(HDC canvas, Camera *cam);
 };
 
 #endif

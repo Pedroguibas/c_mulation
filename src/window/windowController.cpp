@@ -2,9 +2,6 @@
 #include <cwchar>
 #include <stdexcept>
 
-int width = 0;
-int height = 0;
-
 LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   WindowController *self = nullptr;
 
@@ -26,11 +23,11 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
       HDC memDC = CreateCompatibleDC(hdc);
 
-      HBITMAP bitmap = CreateCompatibleBitmap(hdc, width, height);
+      HBITMAP bitmap = CreateCompatibleBitmap(hdc, self->getWidth(), self->getHeight());
       SelectObject(memDC, bitmap);
 
       HBRUSH bgBrush = CreateSolidBrush(RGB(50, 50, 50));
-      RECT rect = {0, 0, width, height};
+      RECT rect = {0, 0, self->getWidth(), self->getHeight()};
       FillRect(memDC, &rect, bgBrush);
       DeleteObject(bgBrush);
 
@@ -42,11 +39,16 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
       SetTextColor(memDC, RGB(0, 255, 255));
 
-      for (int i = 0; i < self->objectList.size(); i++) {
-        self->objectList[i]->draw(memDC);
-      }
+      if (self->cam == nullptr)
+        for (int i = 0; i < self->objectList.size(); i++) {
+          self->objectList[i]->draw(memDC);
+        }
+      else
+        for (int i = 0; i < self->objectList.size(); i++) {
+          self->objectList[i]->draw(memDC, self->cam);
+        }
 
-      BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
+      BitBlt(hdc, 0, 0, self->getWidth(), self->getHeight(), memDC, 0, 0, SRCCOPY);
 
       DeleteObject(bitmap);
       DeleteDC(memDC);
@@ -79,9 +81,10 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
 }
 
 WindowController::WindowController(int w, int h, vector<Object *> objectList, InputHandler inputs) : m_hInstance(GetModuleHandle(nullptr)), inputs(inputs) {
-  width = w;
-  height = h;
+  this->setWidth(w);
+  this->setHeight(h);
   this->objectList = objectList;
+  this->setCamera(nullptr);
 
   const wchar_t *CLASS_NAME = L"Window Class";
 
@@ -122,6 +125,10 @@ WindowController::WindowController(int w, int h, vector<Object *> objectList, In
   ShowWindow(m_hWnd, SW_SHOW);
 }
 
+WindowController::WindowController(int w, int h, vector<Object *> objectList, InputHandler inputs, Camera *cam) : WindowController(w, h, objectList, inputs) {
+  this->setCamera(cam);
+}
+
 WindowController::~WindowController() {
   const wchar_t *CLASS_NAME = L"Window Class";
   UnregisterClass(CLASS_NAME, m_hInstance);
@@ -144,4 +151,21 @@ bool WindowController::processMessages() {
 
 void WindowController::redraw() {
   InvalidateRect(WindowController::getm_hWnd(), NULL, FALSE);
+}
+
+void WindowController::setWidth(int w) {
+  this->width = w;
+}
+int WindowController::getWidth() {
+  return this->width;
+}
+void WindowController::setHeight(int h) {
+  this->height = h;
+}
+int WindowController::getHeight() {
+  return this->height;
+}
+
+void WindowController::setCamera(Camera *cam) {
+  this->cam = cam;
 }
