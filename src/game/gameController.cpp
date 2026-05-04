@@ -17,12 +17,22 @@ void GameController::update(float timespan) {
 }
 
 void GameController::checkCollisions() {
+  Entity *e;
+  bool collided;
   for (int i = 0; i < entities.size(); i++) {
+    e = entities[i];
     for (int j = 0; j < hitboxObjects.size(); j++) {
-      if (entities[i] == hitboxObjects[j])
+      if (e == hitboxObjects[j])
         continue;
-      entities[i]->collide(*hitboxObjects[j]);
+
+      if (e->collide(*hitboxObjects[j]))
+        collided = true;
     }
+  }
+  if (!collided) {
+    e->setOnWallRight(false);
+    e->setOnWallLeft(false);
+    e->setOnGround(false);
   }
 }
 

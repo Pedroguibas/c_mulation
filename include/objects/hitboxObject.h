@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef HITBOX_OBJECT_H
 #define HITBOX_OBJECT_H
 
