@@ -3,13 +3,16 @@
 #include "objects/boundry.h"
 #include "objects/entity.h"
 #include "objects/hitboxObject.h"
+#include "objects/mob.h"
 #include "objects/object.h"
 #include "window/windowController.h"
+#include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <thread>
 using std::cin;
 using std::cout;
+using std::find;
 using std::string;
 using std::chrono::milliseconds;
 using std::this_thread::sleep_for;
@@ -22,7 +25,7 @@ int main() {
 
   HitboxObject ground(1100, 200, 540, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
-  Entity block(40, 40, 540, 30, purple);
+  Mob block(40, 40, 1, 540, 30, purple);
 
   Camera cam(60, 918, 547, 162, &block);
 
@@ -31,6 +34,28 @@ int main() {
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
+
+  block.setOnDeath([&]() {
+    for (int i = 0; i < objectList.size(); i++) {
+      if (objectList[i] == &block) {
+        objectList.erase(objectList.begin() + i);
+        break;
+      }
+    }
+    for (int i = 0; i < hitboxList.size(); i++) {
+      if (hitboxList[i] == &block) {
+        hitboxList.erase(hitboxList.begin() + i);
+        break;
+      }
+    }
+    for (int i = 0; i < entityList.size(); i++) {
+      if (entityList[i] == &block) {
+        entityList.erase(entityList.begin() + i);
+        break;
+      }
+    }
+    cout << "died";
+  });
 
   InputHandler ih;
   ih.keyDown.insert({VK_SPACE, [&]() {

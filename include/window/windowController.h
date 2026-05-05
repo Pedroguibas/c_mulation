@@ -16,7 +16,7 @@ class WindowController {
 private:
   HINSTANCE m_hInstance;
   HWND m_hWnd;
-  vector<Object *> objectList;
+  vector<Object *> &objectList;
   InputHandler inputs;
   int width;
   int height;
@@ -25,8 +25,8 @@ private:
   static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-  WindowController(int w, int h, vector<Object *> objectList, InputHandler inputs);
-  WindowController(int w, int h, vector<Object *> objectList, InputHandler inputs, Camera *cam);
+  WindowController(int w, int h, vector<Object *> &objectList, InputHandler inputs);
+  WindowController(int w, int h, vector<Object *> &objectList, InputHandler inputs, Camera *cam);
   ~WindowController();
 
   WindowController(const WindowController &) = delete;
