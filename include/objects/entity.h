@@ -11,6 +11,8 @@ using std::min;
 using std::chrono::duration;
 using std::chrono::steady_clock;
 
+class Boundry;
+
 class Entity : public HitboxObject {
 private:
   int lastX;
@@ -97,6 +99,8 @@ public:
   void moveRight();
 
   void applyDrag(float timespan);
+
+  void checkInBoundries(Boundry boundry);
 };
 
 #endif

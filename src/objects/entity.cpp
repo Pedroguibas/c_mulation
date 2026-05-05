@@ -1,4 +1,5 @@
 #include "objects/entity.h"
+#include "objects/boundry.h"
 #include <cmath>
 
 Entity::Entity(int width, int height) : HitboxObject(width, height) {
@@ -191,6 +192,7 @@ bool Entity::isMoving() {
 void Entity::jump() {
   if (this->isOnGround()) {
     this->setSpeedY(this->getJumpSpeed());
+    this->setOnGround(false);
 
   } else if (this->isOnWallLeft()) {
     this->setSpeedY(this->getJumpSpeed());
@@ -259,4 +261,22 @@ void Entity::pushout(HitboxObject &obj) {
       this->setOnGround(true);
     }
   }
+}
+
+void Entity::checkInBoundries(Boundry boundry) {
+  int newX = this->getX();
+  int newY = this->getY();
+
+  if (this->getRight() > boundry.getRight())
+    newX = boundry.getRight() - this->getWidth() / 2;
+  else if (this->getLeft() < boundry.getLeft())
+    newX = boundry.getLeft() + this->getWidth() / 2;
+
+  if (this->getBottom() > boundry.getBottom())
+    newY = boundry.getBottom() - this->getHeight() / 2;
+  else if (this->getTop() < boundry.getTop())
+    newY - boundry.getTop() + this->getHeight() / 2;
+
+  this->setX(newX);
+  this->setY(newY);
 }

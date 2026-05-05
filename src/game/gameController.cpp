@@ -1,11 +1,12 @@
 #include "game/gameController.h"
 #include "game/camera.h"
+#include "objects/boundry.h"
 
-GameController::GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam)
-    : objects(objects), hitboxObjects(hitboxObjects), entities(entities), cam(cam) {}
+GameController::GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry)
+    : objects(objects), hitboxObjects(hitboxObjects), entities(entities), cam(cam), boundry(boundry) {}
 
-GameController::GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, float g)
-    : objects(objects), hitboxObjects(hitboxObjects), entities(entities), cam(cam) {
+GameController::GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry, float g)
+    : objects(objects), hitboxObjects(hitboxObjects), entities(entities), cam(cam), boundry(boundry) {
   this->gravity = g;
 }
 
@@ -28,6 +29,8 @@ void GameController::checkCollisions() {
 
       if (e->collide(*hitboxObjects[j]))
         collided = true;
+
+      e->checkInBoundries(*this->boundry);
     }
   }
   if (!collided) {
@@ -41,7 +44,10 @@ void GameController::loopTick() {
   float timespan = min(this->getTickTimespan(), 0.016f);
   this->update(timespan);
   this->checkCollisions();
-  this->cam->update();
+  if (this->boundry == nullptr)
+    this->cam->update();
+  else
+    this->cam->update(this->boundry);
 }
 
 void GameController::setLastTick() {
@@ -61,4 +67,8 @@ float GameController::getTickTimespan() {
 
 void GameController::setCamera(Camera *cam) {
   this->cam = cam;
+}
+
+void GameController::setBoundry(Boundry *boundry) {
+  this->boundry = boundry;
 }
