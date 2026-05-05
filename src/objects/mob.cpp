@@ -30,7 +30,6 @@ void Mob::takeDamage(int dmg) {
 }
 
 void Mob::die() {
-  std::cout << "died";
   this->setAlive(false);
   this->onDeath();
 }

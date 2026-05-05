@@ -54,7 +54,6 @@ int main() {
         break;
       }
     }
-    cout << "died";
   });
 
   InputHandler ih;
