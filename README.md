@@ -25,14 +25,13 @@
 ### Prerequisites
 
 - Windows OS
-- [MinGW](https://www.mingw-w64.org/) with `make` available
+- [MinGW](https://www.mingw-w64.org/)
 
 ### Build & Run
 
-From the **MinGW terminal**, in the project root:
+From **CMD** or the **MinGW terminal**, in the project root:
 
 ```bash
-make
 ./c_mulation
 ```
 
@@ -43,23 +42,32 @@ make
 ```
 c_mulation/
 ├── include/
-│   ├── window/
-│   │   └── windowController.h   # Win32 abstraction layer
-│   └── object/
-│       ├── object.h
-│       ├── objectsList.h
-│       ├── hitboxObject.h
-│       └── Color.h
+│   ├── game/
+│   │   ├── camera.h
+│   │   └── gameController.h
+│   ├── objects/
+│   │   ├── boundry.h
+│   │   ├── color.h
+│   │   ├── entity.h
+│   │   ├── hitboxObject.h
+│   │   └── object.h
+│   └── window/
+│       ├── inputHandler.h
+│       └── windowController.h
 ├── src/
+│   ├── game/
+│   │   ├── camera.cpp
+│   │   └── gameController.cpp
+│   ├── objects/
+│   │   ├── boundry.cpp
+│   │   ├── color.cpp
+│   │   ├── entity.cpp
+│   │   ├── hitboxObject.cpp
+│   │   └── object.cpp
 │   ├── window/
 │   │   └── windowController.cpp
-│   ├── object/
-│   │   ├── object.cpp
-│   │   ├── objectsList.cpp
-│   │   ├── hitboxObject.cpp
-│   │   └── Color.cpp
 │   └── main.cpp
-├── Makefile
+├── makefile
 └── README.md
 ```
 
