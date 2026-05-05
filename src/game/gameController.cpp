@@ -42,12 +42,15 @@ void GameController::checkCollisions() {
 
 void GameController::loopTick() {
   float timespan = min(this->getTickTimespan(), 0.016f);
-  this->update(timespan);
-  this->checkCollisions();
-  if (this->boundry == nullptr)
-    this->cam->update();
-  else
-    this->cam->update(this->boundry);
+  if (this->entities.size() > 0) {
+
+    this->update(timespan);
+    this->checkCollisions();
+    if (this->boundry == nullptr)
+      this->cam->update();
+    else
+      this->cam->update(this->boundry);
+  }
 }
 
 void GameController::setLastTick() {

@@ -263,7 +263,7 @@ void Entity::pushout(HitboxObject &obj) {
   }
 }
 
-void Entity::checkInBoundries(Boundry boundry) {
+void Entity::checkInBoundries(Boundry &boundry) {
   int newX = this->getX();
   int newY = this->getY();
 

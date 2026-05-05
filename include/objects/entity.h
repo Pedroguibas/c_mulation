@@ -100,7 +100,7 @@ public:
 
   void applyDrag(float timespan);
 
-  void checkInBoundries(Boundry boundry);
+  void checkInBoundries(Boundry &boundry);
 };
 
 #endif
