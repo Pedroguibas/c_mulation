@@ -96,7 +96,7 @@ This project was built to demonstrate:
 
 ## License
 
-This project is open source. See [`LICENSE`](LICENSE) for details.
+This project is open source.
 
 ---
 
