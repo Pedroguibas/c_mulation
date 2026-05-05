@@ -5,6 +5,8 @@
 
 #include "objects/entity.h"
 
+class Boundry;
+
 class Camera {
 
 private:
@@ -18,6 +20,7 @@ private:
 
 public:
   Camera(int topLimit, int rightLimit, int bottomLimit, int leftLimit, Entity *ent);
+  Camera(int *limits, Entity *ent);
 
   void setX(int x);
   int getX();
@@ -34,6 +37,7 @@ public:
   int getLeftLimit();
 
   void update();
+  void update(Boundry *boundry);
 };
 
 #endif

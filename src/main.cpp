@@ -1,5 +1,6 @@
 #include "game/camera.h"
 #include "game/gameController.h"
+#include "objects/boundry.h"
 #include "objects/entity.h"
 #include "objects/hitboxObject.h"
 #include "objects/object.h"
@@ -52,7 +53,10 @@ int main() {
 
   WindowController wc(1080, 608, objectList, ih, &cam);
 
-  GameController gc(objectList, hitboxList, entityList, &cam, 1250);
+  int boundries[4] = {-500, 1500, 608, 0};
+  Boundry boundry(boundries, wc.getWidth(), wc.getHeight());
+
+  GameController gc(objectList, hitboxList, entityList, &cam, &boundry, 1250);
   gc.setLastTick();
 
   while (wc.processMessages()) {

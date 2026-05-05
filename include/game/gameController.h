@@ -16,6 +16,7 @@ using std::chrono::seconds;
 using std::chrono::steady_clock;
 
 class Camera;
+class Boundry;
 
 class GameController {
 private:
@@ -25,10 +26,11 @@ private:
   float gravity = 1500;
   steady_clock::time_point lastTick;
   Camera *cam;
+  Boundry *boundry;
 
 public:
-  GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam);
-  GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, float g);
+  GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry);
+  GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry, float g);
 
   void update(float timespan);
 
@@ -42,6 +44,8 @@ public:
   float getTickTimespan();
 
   void setCamera(Camera *cam);
+
+  void setBoundry(Boundry *boundry);
 };
 
 #endif
