@@ -97,16 +97,7 @@ int main() {
   GameController gc(objectList, hitboxList, entityList, &cam, &boundry, 1250);
   gc.setLastTick();
 
-  int count = 0;
   while (wc.processMessages()) {
-
-    count++;
-
-    if (count == 300) {
-      count = 0;
-      block.takeDamage(1);
-    }
-
     wc.redraw();
 
     gc.loopTick();

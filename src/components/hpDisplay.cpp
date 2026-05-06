@@ -9,6 +9,10 @@ void HpDisplay::setMob(Mob *mob) {
   this->mob = mob;
 }
 
+void HpDisplay::setHeartColor(Color &color) {
+  this->heartColor = color;
+}
+
 void HpDisplay::draw(HDC canvas) {
   Text title("HP:", 24, this->getX(), this->getY(), this->getColor());
 
