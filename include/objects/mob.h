@@ -12,6 +12,7 @@ class Mob : public Entity {
 private:
   int hp;
   bool alive;
+  bool invincible;
   function<void()> onDeath;
 
 public:
@@ -21,6 +22,11 @@ public:
   Mob(int width, int height, int hp, int x, int y, const Color &color, const Color &border, int borderThickness);
   Mob(int width, int height, int hp, int x, int y, const Color &color, const Color &border, int borderThickness, float maxSpeed);
   Mob(int width, int height, int hp, int x, int y, const Color &color, const Color &border, int borderThickness, float maxSpeedX, float maxSpeedY);
+
+  void update(float timespan) override;
+
+  void setInvincible(bool invincible);
+  bool isInvincible();
 
   void setHp(int hp);
   int getHp();

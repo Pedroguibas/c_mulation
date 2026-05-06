@@ -1,6 +1,7 @@
 #include "game/gameController.h"
 #include "game/camera.h"
 #include "objects/boundry.h"
+#include <iostream>
 
 GameController::GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry)
     : objects(objects), hitboxObjects(hitboxObjects), entities(entities), cam(cam), boundry(boundry) {}

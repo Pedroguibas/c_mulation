@@ -1,5 +1,8 @@
+#include "components/hpDisplay.h"
+#include "components/text.h"
 #include "game/camera.h"
 #include "game/gameController.h"
+#include "game/gui.h"
 #include "objects/boundry.h"
 #include "objects/entity.h"
 #include "objects/hitboxObject.h"
@@ -18,23 +21,28 @@ using std::chrono::milliseconds;
 using std::this_thread::sleep_for;
 
 int main() {
+  // Define colors
   Color bg(50, 50, 50);
   Color cyan(0, 255, 255);
   Color red(255, 0, 0);
   Color purple(255, 0, 255);
+  Color white(255, 255, 255);
 
+  // Creates objects
   HitboxObject ground(1100, 200, 540, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
-  Mob block(40, 40, 1, 540, 30, purple);
+  Mob block(40, 40, 3, 40, 30, purple);
 
   Camera cam(60, 918, 547, 162, &block);
 
   block.setMaxSpeedX(500);
 
+  // Creates lists
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
 
+  // stop rendering block after it's death
   block.setOnDeath([&]() {
     for (int i = 0; i < objectList.size(); i++) {
       if (objectList[i] == &block) {
@@ -54,9 +62,9 @@ int main() {
         break;
       }
     }
-    cout << "died";
   });
 
+  // Define inputs
   InputHandler ih;
   ih.keyDown.insert({VK_SPACE, [&]() {
                        block.jump();
@@ -76,8 +84,13 @@ int main() {
                      block.setMovingRight(false);
                    }});
 
-  WindowController wc(1080, 608, objectList, ih, &cam);
+  // Define GUI components
+  HpDisplay hpDisplay(40, 20, white, red, &block);
+  vector<Component *> components = {&hpDisplay};
+  GUI gui(components);
 
+  // Create Window and boundries
+  WindowController wc(1080, 608, objectList, gui, ih, &cam);
   int boundries[4] = {-500, 1500, 608, 0};
   Boundry boundry(boundries, wc.getWidth(), wc.getHeight());
 
