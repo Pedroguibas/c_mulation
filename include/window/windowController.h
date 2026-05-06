@@ -12,6 +12,8 @@
 #include <windows.h>
 using std::vector;
 
+class GUI;
+
 class WindowController {
 private:
   HINSTANCE m_hInstance;
@@ -21,12 +23,13 @@ private:
   int width;
   int height;
   Camera *cam;
+  GUI &gui;
 
   static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-  WindowController(int w, int h, vector<Object *> &objectList, InputHandler inputs);
-  WindowController(int w, int h, vector<Object *> &objectList, InputHandler inputs, Camera *cam);
+  WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler inputs);
+  WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler inputs, Camera *cam);
   ~WindowController();
 
   WindowController(const WindowController &) = delete;
@@ -38,6 +41,8 @@ public:
   int getWidth();
   void setHeight(int h);
   int getHeight();
+
+  void setGUI(GUI &gui);
 
   void setCamera(Camera *cam);
 

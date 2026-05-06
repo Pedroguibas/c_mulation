@@ -3,21 +3,18 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include "components/component.h"
 #include <vector>
 using std::vector;
 
-class Object;
-
 class GUI {
 private:
-  vector<Object*> components;
-  
+  vector<Component *> &components;
+
 public:
-  GUI(vector<Object*> components);
+  GUI(vector<Component *> &components);
 
-  vector<Object*>* getComponents();
-
-
+  void draw(HDC canvas);
 };
 
 #endif

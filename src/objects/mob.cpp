@@ -8,6 +8,17 @@ Mob::Mob(int width, int height, int hp, int x, int y, const Color &color, const 
 Mob::Mob(int width, int height, int hp, int x, int y, const Color &color, const Color &border, int borderThickness, float maxSpeed) : Entity(width, height, x, y, color, border, borderThickness, maxSpeed), hp(hp) {}
 Mob::Mob(int width, int height, int hp, int x, int y, const Color &color, const Color &border, int borderThickness, float maxSpeedX, float maxSpeedY) : Entity(width, height, x, y, color, border, borderThickness, maxSpeedX, maxSpeedY), hp(hp) {}
 
+void Mob::update(float timespan) {
+  Entity::update(timespan);
+}
+
+void Mob::setInvincible(bool invincible) {
+  this->invincible = invincible;
+}
+bool Mob::isInvincible() {
+  return this->invincible;
+}
+
 void Mob::setHp(int hp) {
   this->hp = hp;
 }

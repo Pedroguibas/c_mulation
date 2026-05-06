@@ -14,13 +14,15 @@ private:
   Color &color;
 
 public:
+  Component(int x, int y, Color &color);
+
   void setX(int x);
   int getX();
   void setY(int y);
   int getY();
-  
+
   void setColor(Color &color);
-  Color getColor();
+  Color &getColor();
 
   virtual void draw(HDC canvas);
 };

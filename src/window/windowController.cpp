@@ -1,4 +1,5 @@
 #include "window/windowController.h"
+#include "game/gui.h"
 #include <cwchar>
 #include <stdexcept>
 
@@ -31,14 +32,6 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
       FillRect(memDC, &rect, bgBrush);
       DeleteObject(bgBrush);
 
-      LPCWSTR txt = L"C Mulation";
-
-      SetTextColor(memDC, RGB(0, 255, 0));
-      SetBkMode(memDC, TRANSPARENT);
-      TextOutW(memDC, 10, 10, txt, std::wcslen(txt));
-
-      SetTextColor(memDC, RGB(0, 255, 255));
-
       if (self->cam == nullptr)
         for (int i = 0; i < self->objectList.size(); i++) {
           self->objectList[i]->draw(memDC);
@@ -47,6 +40,8 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
         for (int i = 0; i < self->objectList.size(); i++) {
           self->objectList[i]->draw(memDC, self->cam);
         }
+
+      self->gui.draw(memDC);
 
       BitBlt(hdc, 0, 0, self->getWidth(), self->getHeight(), memDC, 0, 0, SRCCOPY);
 
@@ -80,7 +75,7 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-WindowController::WindowController(int w, int h, vector<Object *> &objectList, InputHandler inputs) : m_hInstance(GetModuleHandle(nullptr)), objectList(objectList), inputs(inputs) {
+WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler inputs) : m_hInstance(GetModuleHandle(nullptr)), objectList(objectList), inputs(inputs), gui(gui) {
   this->setWidth(w);
   this->setHeight(h);
   this->setCamera(nullptr);
@@ -124,7 +119,7 @@ WindowController::WindowController(int w, int h, vector<Object *> &objectList, I
   ShowWindow(m_hWnd, SW_SHOW);
 }
 
-WindowController::WindowController(int w, int h, vector<Object *> &objectList, InputHandler inputs, Camera *cam) : WindowController(w, h, objectList, inputs) {
+WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler inputs, Camera *cam) : WindowController(w, h, objectList, gui, inputs) {
   this->setCamera(cam);
 }
 
