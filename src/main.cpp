@@ -21,6 +21,10 @@ using std::chrono::milliseconds;
 using std::this_thread::sleep_for;
 
 int main() {
+  // Define Input sets 
+  const int DEFAULT_KEYDOWN_IS = 1;
+  const int DEFAULT_KEYUP_IS = 1;
+
   // Define colors
   Color bg(50, 50, 50);
   Color cyan(0, 255, 255);
@@ -66,23 +70,25 @@ int main() {
 
   // Define inputs
   InputHandler ih;
-  ih.keyDown.insert({VK_SPACE, [&]() {
+  ih.createKeyDownSet(DEFAULT_KEYDOWN_IS);
+  ih.createKeyUpSet(DEFAULT_KEYUP_IS);
+  ih.insertIntoKeyDownSet(DEFAULT_KEYDOWN_IS, VK_SPACE, [&]() {
                        block.jump();
-                     }});
+                     });
 
-  ih.keyDown.insert({VK_RIGHT, [&]() {
+  ih.insertIntoKeyDownSet(DEFAULT_KEYDOWN_IS, VK_RIGHT, [&]() {
                        block.moveRight();
-                     }});
-  ih.keyDown.insert({VK_LEFT, [&]() {
+                     });
+  ih.insertIntoKeyDownSet(DEFAULT_KEYDOWN_IS, VK_LEFT, [&]() {
                        block.moveLeft();
-                     }});
+                     });
 
-  ih.keyUp.insert({VK_RIGHT, [&]() {
+  ih.insertIntoKeyUpSet(DEFAULT_KEYUP_IS, VK_RIGHT, [&]() {
                      block.setMovingLeft(false);
-                   }});
-  ih.keyUp.insert({VK_LEFT, [&]() {
+                   });
+  ih.insertIntoKeyUpSet(DEFAULT_KEYUP_IS, VK_LEFT, [&]() {
                      block.setMovingRight(false);
-                   }});
+                   });
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);

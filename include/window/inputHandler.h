@@ -9,9 +9,23 @@ using std::function;
 using std::unordered_map;
 
 class InputHandler {
+private:
+  unordered_map<int, unordered_map<int, unordered_map<int, function<void()>>>> inputEventSets;
+  unordered_map<int, int> currentFuncSets; // <event, func>
+
 public:
-  unordered_map<int, function<void()>> keyDown;
-  unordered_map<int, function<void()>> keyUp;
+  InputHandler();
+
+  bool eventSetExists(int set);
+  bool funcSetExists(int event, int set);
+  bool funcExists(int event, int set, int key);
+
+  void setCurrentFuncSet(int event, int key);
+
+  void createFuncSet(int event, int set);
+  void insertFunc(int event, int set, int key, function<void()>func);
+
+  function<void()> getCurrentFunc();
 };
 
 #endif
