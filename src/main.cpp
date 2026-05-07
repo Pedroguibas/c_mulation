@@ -8,6 +8,8 @@
 #include "objects/hitboxObject.h"
 #include "objects/mob.h"
 #include "objects/object.h"
+#include "objects/triggerZone.h"
+#include "objects/visibleTriggerZone.h"
 #include "window/windowController.h"
 #include <algorithm>
 #include <chrono>
@@ -15,6 +17,7 @@
 #include <thread>
 using std::cin;
 using std::cout;
+using std::endl;
 using std::find;
 using std::string;
 using std::chrono::milliseconds;
@@ -35,15 +38,18 @@ int main() {
   HitboxObject ground(1100, 200, 540, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
   Mob block(40, 40, 3, 40, 30, pink);
-
+  
   Camera cam(60, 918, 547, 162, &block);
-
+  
   block.setMaxSpeedX(500);
 
   // Creates lists
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
+  TriggerZone coutTrigger(100, 400, 500, 308, false, entityList, [&]() {
+    cout << "triggered" << endl;
+  });
 
   // stop rendering block after it's death
   block.setOnDeath([&]() {
@@ -92,6 +98,8 @@ int main() {
     block.setMovingRight(false);
   });
 
+
+
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
   vector<Component *> components = {&hpDisplay};
@@ -107,6 +115,8 @@ int main() {
 
   while (wc.processMessages()) {
     wc.redraw();
+
+    coutTrigger.checkTrigger();
 
     gc.loopTick();
 

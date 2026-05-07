@@ -3,9 +3,6 @@
 using std::max;
 using std::min;
 
-HitboxObject::HitboxObject(int width, int height) : Object(width, height) {
-}
-
 HitboxObject::HitboxObject(int width, int height, int x, int y) : Object(width, height, x, y) {
 }
 

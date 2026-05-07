@@ -7,7 +7,6 @@
 
 class HitboxObject : public Object {
 public:
-  HitboxObject(int width, int height);
   HitboxObject(int width, int height, int x, int y);
   HitboxObject(int width, int height, int x, int y, const Color &color);
   HitboxObject(int width, int height, int x, int y, const Color &color, const Color &border, int borderThickness);
