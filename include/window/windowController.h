@@ -6,8 +6,8 @@
 #define _UNICODE
 
 #include "game/camera.h"
+#include "game/inputHandler.h"
 #include "objects/object.h"
-#include "window/inputHandler.h"
 #include <vector>
 #include <windows.h>
 using std::vector;

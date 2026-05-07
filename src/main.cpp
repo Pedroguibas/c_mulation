@@ -21,21 +21,20 @@ using std::chrono::milliseconds;
 using std::this_thread::sleep_for;
 
 int main() {
-  // Define Input sets 
-  const int DEFAULT_KEYDOWN_IS = 1;
-  const int DEFAULT_KEYUP_IS = 1;
+  // Define Input sets
+  const int DEFAULT_INPUTSET = 1;
 
   // Define colors
   Color bg(50, 50, 50);
   Color cyan(0, 255, 255);
   Color red(255, 0, 0);
-  Color purple(255, 0, 255);
+  Color pink(255, 0, 255);
   Color white(255, 255, 255);
 
   // Creates objects
   HitboxObject ground(1100, 200, 540, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
-  Mob block(40, 40, 3, 40, 30, purple);
+  Mob block(40, 40, 3, 40, 30, pink);
 
   Camera cam(60, 918, 547, 162, &block);
 
@@ -70,25 +69,28 @@ int main() {
 
   // Define inputs
   InputHandler ih;
-  ih.createKeyDownSet(DEFAULT_KEYDOWN_IS);
-  ih.createKeyUpSet(DEFAULT_KEYUP_IS);
-  ih.insertIntoKeyDownSet(DEFAULT_KEYDOWN_IS, VK_SPACE, [&]() {
-                       block.jump();
-                     });
 
-  ih.insertIntoKeyDownSet(DEFAULT_KEYDOWN_IS, VK_RIGHT, [&]() {
-                       block.moveRight();
-                     });
-  ih.insertIntoKeyDownSet(DEFAULT_KEYDOWN_IS, VK_LEFT, [&]() {
-                       block.moveLeft();
-                     });
+  ih.createFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+  ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+  ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_SPACE, [&]() {
+    block.jump();
+  });
 
-  ih.insertIntoKeyUpSet(DEFAULT_KEYUP_IS, VK_RIGHT, [&]() {
-                     block.setMovingLeft(false);
-                   });
-  ih.insertIntoKeyUpSet(DEFAULT_KEYUP_IS, VK_LEFT, [&]() {
-                     block.setMovingRight(false);
-                   });
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
+    block.moveRight();
+  });
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_LEFT, [&]() {
+    block.moveLeft();
+  });
+
+  ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
+    block.setMovingLeft(false);
+  });
+  ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_LEFT, [&]() {
+    block.setMovingRight(false);
+  });
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);

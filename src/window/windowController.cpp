@@ -1,7 +1,11 @@
 #include "window/windowController.h"
 #include "game/gui.h"
 #include <cwchar>
+#include <iostream>
 #include <stdexcept>
+using std::cout;
+using std::endl;
+using std::invalid_argument;
 
 LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   WindowController *self = nullptr;
@@ -52,15 +56,18 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
     } break;
 
     case WM_KEYDOWN:
-      if (self->inputs.keyDown.find(wParam) != self->inputs.keyDown.end())
-        self->inputs.keyDown[wParam]();
+      try {
+        self->inputs.getCurrentFunc(WM_KEYDOWN, wParam)();
+      } catch (invalid_argument e) {
+      }
 
       break;
 
     case WM_KEYUP:
-      if (self->inputs.keyUp.find(wParam) != self->inputs.keyUp.end())
-        self->inputs.keyUp[wParam]();
-
+      try {
+        self->inputs.getCurrentFunc(WM_KEYUP, wParam)();
+      } catch (invalid_argument e) {
+      }
       break;
 
     case WM_CLOSE:
