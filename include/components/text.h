@@ -9,25 +9,27 @@ using std::string;
 using std::wstring;
 
 class Text : public Component {
-private:
+protected:
   string content;
   int fontSize;
-  float width;
   wstring renderText;
   HFONT font;
-
+  
+  
 public:
   Text(string content, int fontSize, int x, int y, Color &color);
   ~Text();
-
+  
   void setContent(string content);
   string getContent();
-
+  
   wstring utf8ToUtf16(const string &str);
-  float getWidth();
 
+  void updateHeight() override;
+  void updateWidth() override;
+  
   void setFontSize(int size);
-
+  
   void draw(HDC canvas) override;
 };
 

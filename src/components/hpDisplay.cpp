@@ -1,7 +1,6 @@
 #include "components/hpDisplay.h"
 #include "components/text.h"
 #include "objects/mob.h"
-#include <cmath>
 
 HpDisplay::HpDisplay(int x, int y, Color &color, Color &heartColor, Mob *mob) : Component(x, y, color), mob(mob), heartColor(heartColor) {}
 
@@ -21,7 +20,7 @@ void HpDisplay::draw(HDC canvas) {
   for (int i = 0; i < this->mob->getHp(); i++)
     hearts += "❤️";
 
-  Text hp(hearts, 24, ceil(this->getX() + title.getWidth()), this->getY(), this->heartColor);
+  Text hp(hearts, 24, this->getX() + title.getWidth(), this->getY(), this->heartColor);
 
   title.draw(canvas);
   hp.draw(canvas);
