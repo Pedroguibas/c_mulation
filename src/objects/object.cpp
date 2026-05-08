@@ -71,7 +71,7 @@ void Object::draw(HDC canvas) {
   DeleteObject(pen);
 }
 
-void Object::draw(HDC canvas, Camera *cam) {
+void Object::draw(HDC canvas, Camera &cam) {
   HBRUSH brush = CreateSolidBrush(RGB(this->getColor().getR(), this->getColor().getG(), this->getColor().getB()));
   HPEN pen = CreatePen(PS_SOLID, this->getBorderThickness(), RGB(this->getBorder().getR(), this->getBorder().getG(), this->getBorder().getB()));
 
@@ -82,10 +82,10 @@ void Object::draw(HDC canvas, Camera *cam) {
 
   Rectangle(
       canvas,
-      this->getLeft() + borderDif - cam->getX(),
-      this->getTop() + borderDif - cam->getY(),
-      this->getRight() - borderDif - cam->getX(),
-      this->getBottom() - borderDif - cam->getY());
+      this->getLeft() + borderDif - cam.getX(),
+      this->getTop() + borderDif - cam.getY(),
+      this->getRight() - borderDif - cam.getX(),
+      this->getBottom() - borderDif - cam.getY());
 
   SelectObject(canvas, oldBrush);
   SelectObject(canvas, oldPen);
