@@ -28,7 +28,7 @@ public:
   int getBorderThickness();
 
   void draw(HDC canvas);
-  void draw(HDC canvas, Camera *cam);
+  void draw(HDC canvas, Camera &cam);
 };
 
 #endif

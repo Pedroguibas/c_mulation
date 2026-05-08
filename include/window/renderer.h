@@ -5,27 +5,42 @@ using std::vector;
 
 #ifndef RENDERER_H
 #define RENDERER_H
-using ObjectVec = vector<Object &>;
 
-class Object;
+#include <windows.h>
+#include "objects/object.h"
+using ObjectVec = vector<Object *>;
+
+class Camera;
+class GUI;
 
 class Renderer {
 private:
+  Camera &cam;
+  GUI &gui;
   ObjectVec foreground;
   ObjectVec mainground;
   ObjectVec background;
 
 public:
-  Renderer();
-  Renderer(ObjectVec background, ObjectVec mainground, ObjectVec foreground);
+  Renderer(Camera &cam, GUI &gui);
+  
+  void removeForeground(Object *obj);
+  void removeMainground(Object *obj);
+  void removeBackground(Object *obj);
 
-  void copyForeground(ObjectVec fg);
-  void copyMainground(ObjectVec mg);
-  void copyBackground(ObjectVec bg);
+  Camera &getCam();
+  GUI &getGui();
 
-  void renderForeground();
-  void renderMainground();
-  void renderBackground();
+  void appendForeground(Object *newObj);
+  void appendForeground(ObjectVec vec);
+  void appendMainground(Object *newObj);
+  void appendMainground(ObjectVec vec);
+  void appendBackground(Object *newObj);
+  void appendBackground(ObjectVec vec);
+
+  void renderForeground(HDC canvas);
+  void renderMainground(HDC canvas);
+  void renderBackground(HDC canvas);
 };
 
 #endif

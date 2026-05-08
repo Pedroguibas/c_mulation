@@ -11,6 +11,7 @@
 #include "objects/triggerZone.h"
 #include "objects/visibleTriggerZone.h"
 #include "window/windowController.h"
+#include "window/renderer.h"
 #include <algorithm>
 #include <chrono>
 #include <future>
@@ -52,15 +53,13 @@ int main() {
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
   Mob block(40, 40, 3, 40, 30, pink);
 
-  Camera cam(60, 918, 547, 162, &block);
-
   block.setMaxSpeedX(500);
 
   // Creates lists
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
-  TriggerZone takeDmgTrigger(3000, 10, 1500, 608, false, entityList, [&]() {
+  VisibleTriggerZone takeDmgTrigger(3000, 10, 1500, 608, false, entityList, [&]() {
     block.takeDamage(1);
     ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
     ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
@@ -77,28 +76,6 @@ int main() {
         ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
         ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
       });
-    }
-  });
-
-  // stop rendering block after it's death
-  block.setOnDeath([&]() {
-    for (int i = 0; i < objectList.size(); i++) {
-      if (objectList[i] == &block) {
-        objectList.erase(objectList.begin() + i);
-        break;
-      }
-    }
-    for (int i = 0; i < hitboxList.size(); i++) {
-      if (hitboxList[i] == &block) {
-        hitboxList.erase(hitboxList.begin() + i);
-        break;
-      }
-    }
-    for (int i = 0; i < entityList.size(); i++) {
-      if (entityList[i] == &block) {
-        entityList.erase(entityList.begin() + i);
-        break;
-      }
     }
   });
 
@@ -130,9 +107,31 @@ int main() {
   HpDisplay hpDisplay(40, 20, white, red, &block);
   vector<Component *> components = {&hpDisplay};
   GUI gui(components);
+  
+  // Creates renderer
+  Camera cam(60, 918, 547, 162, &block);
+  Renderer renderer(cam, gui);
+  renderer.appendMainground(objectList);
+  renderer.appendBackground(&takeDmgTrigger);
+  // stop rendering block after it's death
+  block.setOnDeath([&]() {
+    renderer.removeMainground(&block);
+    for (int i = 0; i < hitboxList.size(); i++) {
+      if (hitboxList[i] == &block) {
+        hitboxList.erase(hitboxList.begin() + i);
+        break;
+      }
+    }
+    for (int i = 0; i < entityList.size(); i++) {
+      if (entityList[i] == &block) {
+        entityList.erase(entityList.begin() + i);
+        break;
+      }
+    }
+  });
 
   // Create Window and boundries
-  WindowController wc(1080, 608, objectList, gui, ih, &cam);
+  WindowController wc(1080, 608, renderer, gui, ih);
   int boundries[4] = {-500, 1500, 608, 0};
   Boundry boundry(boundries, wc.getWidth(), wc.getHeight());
 

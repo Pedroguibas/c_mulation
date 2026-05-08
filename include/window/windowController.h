@@ -13,23 +13,22 @@
 using std::vector;
 
 class GUI;
+class Renderer;
 
 class WindowController {
 private:
   HINSTANCE m_hInstance;
   HWND m_hWnd;
-  vector<Object *> &objectList;
+  Renderer &renderer;
   InputHandler &inputs;
   int width;
   int height;
-  Camera *cam;
   GUI &gui;
 
   static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-  WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler &inputs);
-  WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler &inputs, Camera *cam);
+  WindowController(int w, int h, Renderer &renderer, GUI &gui, InputHandler &inputs);
   ~WindowController();
 
   WindowController(const WindowController &) = delete;
@@ -41,10 +40,6 @@ public:
   int getWidth();
   void setHeight(int h);
   int getHeight();
-
-  void setGUI(GUI &gui);
-
-  void setCamera(Camera *cam);
 
   HWND getm_hWnd() {
     return m_hWnd;

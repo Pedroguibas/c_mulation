@@ -1,4 +1,5 @@
 #include "window/windowController.h"
+#include "window/renderer.h"
 #include "game/gui.h"
 #include <cwchar>
 #include <iostream>
@@ -36,14 +37,9 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
       FillRect(memDC, &rect, bgBrush);
       DeleteObject(bgBrush);
 
-      if (self->cam == nullptr)
-        for (int i = 0; i < self->objectList.size(); i++) {
-          self->objectList[i]->draw(memDC);
-        }
-      else
-        for (int i = 0; i < self->objectList.size(); i++) {
-          self->objectList[i]->draw(memDC, self->cam);
-        }
+      self->renderer.renderBackground(memDC);
+      self->renderer.renderMainground(memDC);
+      self->renderer.renderForeground(memDC);
 
       self->gui.draw(memDC);
 
@@ -82,10 +78,9 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler &inputs) : m_hInstance(GetModuleHandle(nullptr)), objectList(objectList), inputs(inputs), gui(gui) {
+WindowController::WindowController(int w, int h, Renderer &renderer, GUI &gui, InputHandler &inputs) : m_hInstance(GetModuleHandle(nullptr)), renderer(renderer), inputs(inputs), gui(gui) {
   this->setWidth(w);
   this->setHeight(h);
-  this->setCamera(nullptr);
 
   const wchar_t *CLASS_NAME = L"Window Class";
 
@@ -126,10 +121,6 @@ WindowController::WindowController(int w, int h, vector<Object *> &objectList, G
   ShowWindow(m_hWnd, SW_SHOW);
 }
 
-WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler &inputs, Camera *cam) : WindowController(w, h, objectList, gui, inputs) {
-  this->setCamera(cam);
-}
-
 WindowController::~WindowController() {
   const wchar_t *CLASS_NAME = L"Window Class";
   UnregisterClass(CLASS_NAME, m_hInstance);
@@ -165,8 +156,4 @@ void WindowController::setHeight(int h) {
 }
 int WindowController::getHeight() {
   return this->height;
-}
-
-void WindowController::setCamera(Camera *cam) {
-  this->cam = cam;
 }
