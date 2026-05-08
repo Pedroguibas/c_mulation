@@ -59,7 +59,7 @@ int main() {
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
-  VisibleTriggerZone takeDmgTrigger(3000, 10, 1500, 608, false, entityList, [&]() {
+  VisibleTriggerZone takeDmgTrigger(3000, 40, 1500, 608, red, false, entityList, [&]() {
     block.takeDamage(1);
     ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
     ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
@@ -109,7 +109,7 @@ int main() {
   GUI gui(components);
   
   // Creates renderer
-  Camera cam(60, 918, 547, 162, &block);
+  Camera cam(60, 918, 400, 162, &block);
   Renderer renderer(cam, gui);
   renderer.appendMainground(objectList);
   renderer.appendBackground(&takeDmgTrigger);
