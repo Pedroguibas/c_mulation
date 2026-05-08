@@ -3,11 +3,12 @@
 #ifndef VISIBLE_TRIGGER_ZONE_H
 #define VISIBLE_TRIGGER_ZONE_H
 
-#include <vector>
-#include <functional>
 #include "objects/Object.h"
-using std::vector;
+#include "objects/box.h"
+#include <functional>
+#include <vector>
 using std::function;
+using std::vector;
 
 class Entity;
 
@@ -27,10 +28,8 @@ public:
 
   void checkTrigger();
 
-
   void observeEntity(Entity *ent);
   void stopObservingEntity(Entity *ent);
-  
 };
 
 #endif

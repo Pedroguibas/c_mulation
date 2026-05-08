@@ -13,19 +13,32 @@
 #include "window/windowController.h"
 #include <algorithm>
 #include <chrono>
+#include <future>
 #include <iostream>
 #include <thread>
 using std::cin;
 using std::cout;
 using std::endl;
 using std::find;
+using std::function;
 using std::string;
 using std::chrono::milliseconds;
 using std::this_thread::sleep_for;
 
+void setTimeout(int ms, function<void()> func) {
+  std::thread([=]() {
+    sleep_for(milliseconds(ms));
+    func();
+  }).detach();
+}
+
 int main() {
   // Define Input sets
   const int DEFAULT_INPUTSET = 1;
+  const int DISABLED_INPUTSET = 2;
+  InputHandler ih;
+  ih.createFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, DISABLED_INPUTSET);
 
   // Define colors
   Color bg(50, 50, 50);
@@ -38,17 +51,33 @@ int main() {
   HitboxObject ground(1100, 200, 540, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
   Mob block(40, 40, 3, 40, 30, pink);
-  
+
   Camera cam(60, 918, 547, 162, &block);
-  
+
   block.setMaxSpeedX(500);
 
   // Creates lists
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
-  TriggerZone coutTrigger(100, 400, 500, 308, false, entityList, [&]() {
-    cout << "triggered" << endl;
+  TriggerZone takeDmgTrigger(3000, 10, 1500, 608, false, entityList, [&]() {
+    block.takeDamage(1);
+    ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
+    ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
+
+    if (block.isAlive()) {
+      block.setSpeedX(0);
+      block.setSpeedY(0);
+      block.setX(1000);
+      block.setY(408);
+      block.setMovingRight(false);
+      block.setMovingLeft(false);
+
+      setTimeout(500, [&]() {
+        ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+        ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+      });
+    }
   });
 
   // stop rendering block after it's death
@@ -74,7 +103,6 @@ int main() {
   });
 
   // Define inputs
-  InputHandler ih;
 
   ih.createFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
   ih.createFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
@@ -98,8 +126,6 @@ int main() {
     block.setMovingRight(false);
   });
 
-
-
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
   vector<Component *> components = {&hpDisplay};
@@ -116,7 +142,7 @@ int main() {
   while (wc.processMessages()) {
     wc.redraw();
 
-    coutTrigger.checkTrigger();
+    takeDmgTrigger.checkTrigger();
 
     gc.loopTick();
 

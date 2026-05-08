@@ -1,6 +1,9 @@
 #include "objects/box.h"
 
-Box::Box(int width, int height, int x, int y) : width(width), height(height), x(x), y(y) {}
+Box::Box(int width, int height, int x, int y) : width(width), height(height) {
+  this->setX(x);
+  this->setY(y);
+}
 
 void Box::setWidth(int w) {
   this->width = w;
