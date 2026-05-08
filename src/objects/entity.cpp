@@ -2,10 +2,6 @@
 #include "objects/boundry.h"
 #include <cmath>
 
-Entity::Entity(int width, int height) : HitboxObject(width, height) {
-  this->setSpeedX(0);
-  this->setSpeedY(0);
-}
 Entity::Entity(int width, int height, int x, int y) : HitboxObject(width, height, x, y) {
   this->setSpeedX(0);
   this->setSpeedY(0);
@@ -41,12 +37,12 @@ void Entity::update(float timespan) {
 
 void Entity::setX(int x) {
   this->setLastX(this->getX());
-  Object::setX(x);
+  Box::setX(x);
 }
 
 void Entity::setY(int y) {
   this->setLastY(this->getY());
-  Object::setY(y);
+  Box::setY(y);
 }
 
 void Entity::setLastX(int x) {

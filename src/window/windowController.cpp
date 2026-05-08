@@ -82,7 +82,7 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler inputs) : m_hInstance(GetModuleHandle(nullptr)), objectList(objectList), inputs(inputs), gui(gui) {
+WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler &inputs) : m_hInstance(GetModuleHandle(nullptr)), objectList(objectList), inputs(inputs), gui(gui) {
   this->setWidth(w);
   this->setHeight(h);
   this->setCamera(nullptr);
@@ -126,7 +126,7 @@ WindowController::WindowController(int w, int h, vector<Object *> &objectList, G
   ShowWindow(m_hWnd, SW_SHOW);
 }
 
-WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler inputs, Camera *cam) : WindowController(w, h, objectList, gui, inputs) {
+WindowController::WindowController(int w, int h, vector<Object *> &objectList, GUI &gui, InputHandler &inputs, Camera *cam) : WindowController(w, h, objectList, gui, inputs) {
   this->setCamera(cam);
 }
 

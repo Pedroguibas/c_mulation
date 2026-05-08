@@ -32,7 +32,6 @@ private:
   bool movingRight = false;
 
 public:
-  Entity(int width, int height);
   Entity(int width, int height, int x, int y);
   Entity(int width, int height, int x, int y, const Color &color);
   Entity(int width, int height, int x, int y, const Color &color, const Color &border, int borderThickness);

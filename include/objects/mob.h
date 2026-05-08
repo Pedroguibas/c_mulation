@@ -16,7 +16,6 @@ private:
   function<void()> onDeath;
 
 public:
-  Mob(int width, int height, int hp);
   Mob(int width, int height, int hp, int x, int y);
   Mob(int width, int height, int hp, int x, int y, const Color &color);
   Mob(int width, int height, int hp, int x, int y, const Color &color, const Color &border, int borderThickness);

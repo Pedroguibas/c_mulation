@@ -1,7 +1,6 @@
 #include "objects/mob.h"
 #include <iostream>
 
-Mob::Mob(int width, int height, int hp) : Entity(width, height), hp(hp) {}
 Mob::Mob(int width, int height, int hp, int x, int y) : Entity(width, height, x, y), hp(hp) {}
 Mob::Mob(int width, int height, int hp, int x, int y, const Color &color) : Entity(width, height, x, y, color), hp(hp) {}
 Mob::Mob(int width, int height, int hp, int x, int y, const Color &color, const Color &border, int borderThickness) : Entity(width, height, x, y, color, border, borderThickness), hp(hp) {}

@@ -3,46 +3,21 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "objects/box.h"
 #include "color.h"
 #include <windows.h>
 
 class Camera;
 
-class Object {
+class Object : public Box {
 private:
-  int width;
-  int height;
-  int x;
-  int y;
-  int top;
-  int bottom;
-  int right;
-  int left;
   int borderThickness;
   Color border, color;
 
 public:
-  Object(int width, int height);
   Object(int width, int height, int x, int y);
   Object(int width, int height, int x, int y, const Color &color);
   Object(int width, int height, int x, int y, const Color &color, const Color &border, int borderThickness);
-
-  void setWidth(int);
-  int getWidth();
-
-  void setHeight(int h);
-  int getHeight();
-
-  virtual void setX(int x);
-  int getX();
-
-  virtual void setY(int y);
-  int getY();
-
-  int getTop();
-  int getRight();
-  int getBottom();
-  int getLeft();
 
   void setColor(Color color);
   Color getColor();

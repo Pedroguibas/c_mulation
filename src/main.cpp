@@ -8,21 +8,37 @@
 #include "objects/hitboxObject.h"
 #include "objects/mob.h"
 #include "objects/object.h"
+#include "objects/triggerZone.h"
+#include "objects/visibleTriggerZone.h"
 #include "window/windowController.h"
 #include <algorithm>
 #include <chrono>
+#include <future>
 #include <iostream>
 #include <thread>
 using std::cin;
 using std::cout;
+using std::endl;
 using std::find;
+using std::function;
 using std::string;
 using std::chrono::milliseconds;
 using std::this_thread::sleep_for;
 
+void setTimeout(int ms, function<void()> func) {
+  std::thread([=]() {
+    sleep_for(milliseconds(ms));
+    func();
+  }).detach();
+}
+
 int main() {
   // Define Input sets
   const int DEFAULT_INPUTSET = 1;
+  const int DISABLED_INPUTSET = 2;
+  InputHandler ih;
+  ih.createFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, DISABLED_INPUTSET);
 
   // Define colors
   Color bg(50, 50, 50);
@@ -44,6 +60,25 @@ int main() {
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
+  TriggerZone takeDmgTrigger(3000, 10, 1500, 608, false, entityList, [&]() {
+    block.takeDamage(1);
+    ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
+    ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
+
+    if (block.isAlive()) {
+      block.setSpeedX(0);
+      block.setSpeedY(0);
+      block.setX(1000);
+      block.setY(408);
+      block.setMovingRight(false);
+      block.setMovingLeft(false);
+
+      setTimeout(500, [&]() {
+        ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+        ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+      });
+    }
+  });
 
   // stop rendering block after it's death
   block.setOnDeath([&]() {
@@ -68,7 +103,6 @@ int main() {
   });
 
   // Define inputs
-  InputHandler ih;
 
   ih.createFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
   ih.createFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
@@ -107,6 +141,8 @@ int main() {
 
   while (wc.processMessages()) {
     wc.redraw();
+
+    takeDmgTrigger.checkTrigger();
 
     gc.loopTick();
 
