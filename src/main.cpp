@@ -1,3 +1,4 @@
+#include "components/center.h"
 #include "components/hpDisplay.h"
 #include "components/text.h"
 #include "game/camera.h"
@@ -10,8 +11,8 @@
 #include "objects/object.h"
 #include "objects/triggerZone.h"
 #include "objects/visibleTriggerZone.h"
-#include "window/windowController.h"
 #include "window/renderer.h"
+#include "window/windowController.h"
 #include <algorithm>
 #include <chrono>
 #include <future>
@@ -105,9 +106,11 @@ int main() {
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
-  vector<Component *> components = {&hpDisplay};
+  Center death(1080, 608, 0, 0, red, new Text("You Died", 30, 0, 0, red));
+  vector<Component *>
+      components = {&hpDisplay};
   GUI gui(components);
-  
+
   // Creates renderer
   Camera cam(60, 918, 400, 162, &block);
   Renderer renderer(cam, gui);
@@ -128,6 +131,8 @@ int main() {
         break;
       }
     }
+    gui.add(&death);
+    gui.remove(&hpDisplay);
   });
 
   // Create Window and boundries

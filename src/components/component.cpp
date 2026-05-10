@@ -26,7 +26,7 @@ Color &Component::getColor() {
 void Component::setWidth(int w) {
   this->width = w;
 }
-int Component::getWidht() {
+int Component::getWidth() {
   return this->width;
 }
 
@@ -38,3 +38,7 @@ int Component::getHeight() {
 }
 
 void Component::draw(HDC canvas) {}
+
+void Component::updateHeight() {}
+
+void Component::updateWidth() {}
