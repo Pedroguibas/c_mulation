@@ -1,4 +1,5 @@
 #include "components/center.h"
+#include "components/column.h"
 #include "components/hpDisplay.h"
 #include "components/text.h"
 #include "game/camera.h"
@@ -106,7 +107,7 @@ int main() {
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
-  Center death(1080, 608, 0, 0, red, new Text("You Died", 30, 0, 0, red));
+  Center death(1080, 608, 0, 0, red, new Column(0, 0, red, {new Text("You Died", 44, 0, 0, red), new Column(0, 0, white, {new Text("respawn", 30, 0, 0, white), new Text("quit", 30, 0, 0, white)}, 10)}, 30));
   vector<Component *>
       components = {&hpDisplay};
   GUI gui(components);

@@ -14,6 +14,10 @@ private:
 public:
   Center(int widht, int height, int x, int y, Color color, Component *child);
   Center(int widht, int x, int y, Color color, Component *child);
+  ~Center();
+
+  void updateWidth() override;
+  void updateHeight() override;
 
   void draw(HDC canvas) override;
 };

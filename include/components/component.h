@@ -17,6 +17,7 @@ private:
 
 public:
   Component(int x, int y, Color &color);
+  virtual ~Component() {}
 
   void setX(int x);
   int getX();
