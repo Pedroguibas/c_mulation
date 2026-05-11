@@ -14,6 +14,9 @@ private:
 public:
   GUI(vector<Component *> &components);
 
+  void add(Component *comp);
+  void remove(Component *comp);
+
   void draw(HDC canvas);
 };
 

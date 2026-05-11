@@ -11,6 +11,8 @@ class Component {
 private:
   int x;
   int y;
+  int width;
+  int height;
   Color &color;
 
 public:
@@ -21,9 +23,16 @@ public:
   void setY(int y);
   int getY();
 
+  void setWidth(int w);
+  int getWidth();
+  void setHeight(int h);
+  int getHeight();
+
   void setColor(Color &color);
   Color &getColor();
 
+  virtual void updateHeight();
+  virtual void updateWidth();
   virtual void draw(HDC canvas);
 };
 

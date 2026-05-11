@@ -1,5 +1,6 @@
 #include "components/text.h"
 #include "objects/color.h"
+#include <cmath>
 using std::wstring;
 
 Text::Text(string content, int fontSize, int x, int y, Color &color)
@@ -11,10 +12,16 @@ Text::~Text() {
   DeleteObject(this->font);
 }
 
+void Text::updateWidth() {
+  this->setWidth(this->fontSize * 0.6 * this->content.length());
+}
+void Text::updateHeight() {
+  this->setHeight(this->fontSize);
+}
+
 void Text::setContent(string content) {
   this->content = content;
   this->renderText = this->utf8ToUtf16(content);
-  this->width = this->fontSize * 0.6 * content.length();
 }
 string Text::getContent() {
   return this->content;
@@ -22,7 +29,8 @@ string Text::getContent() {
 
 void Text::setFontSize(int size) {
   this->fontSize = size;
-  this->width = size * 0.6 * this->content.length();
+  this->updateHeight();
+  this->updateWidth();
 
   this->font = CreateFontW(
       this->fontSize,
@@ -36,10 +44,6 @@ void Text::setFontSize(int size) {
       CLEARTYPE_QUALITY,
       DEFAULT_PITCH | FF_DONTCARE,
       L"Arial");
-}
-
-float Text::getWidth() {
-  return this->width;
 }
 
 wstring Text::utf8ToUtf16(const string &str) {
