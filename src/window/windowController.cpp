@@ -52,9 +52,10 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
     } break;
 
     case WM_KEYDOWN:
-      try {
+    try {
         self->inputs.getCurrentFunc(WM_KEYDOWN, wParam)();
       } catch (invalid_argument e) {
+        cout << e.what() << endl;
       }
 
       break;
@@ -63,6 +64,7 @@ LRESULT CALLBACK WindowController::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
       try {
         self->inputs.getCurrentFunc(WM_KEYUP, wParam)();
       } catch (invalid_argument e) {
+        cout << e.what() << endl;
       }
       break;
 

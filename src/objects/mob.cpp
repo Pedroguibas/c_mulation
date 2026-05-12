@@ -20,6 +20,11 @@ bool Mob::isInvincible() {
 
 void Mob::setHp(int hp) {
   this->hp = hp;
+  
+  if (hp > 0)
+    this->setAlive(true);
+  else
+    this->setAlive(false);
 }
 int Mob::getHp() {
   return this->hp;

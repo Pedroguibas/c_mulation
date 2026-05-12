@@ -39,6 +39,9 @@ void InputHandler::setCurrentFuncSet(int event, int set) {
   else
     this->currentFuncSets[event] = set;
 }
+int InputHandler::getCurrentFuncSet(int event) {
+  return this->currentFuncSets[event];
+}
 
 void InputHandler::createEventSet(int event) {
   this->inputEventSets[event];

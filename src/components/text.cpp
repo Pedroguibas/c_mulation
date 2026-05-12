@@ -4,7 +4,7 @@
 using std::wstring;
 
 Text::Text(string content, int fontSize, int x, int y, Color &color)
-    : content(content), Component(x, y, color) {
+    : content(content), ColorfulComponent(x, y, color) {
   this->renderText = this->utf8ToUtf16(content);
   this->setFontSize(fontSize);
 }
@@ -13,7 +13,7 @@ Text::~Text() {
 }
 
 void Text::updateWidth() {
-  this->setWidth(this->fontSize * 0.6 * this->content.length());
+  this->setWidth(this->fontSize * 0.55 * this->content.length());
 }
 void Text::updateHeight() {
   this->setHeight(this->fontSize);

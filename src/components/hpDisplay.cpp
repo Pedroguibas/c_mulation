@@ -2,7 +2,7 @@
 #include "components/text.h"
 #include "objects/mob.h"
 
-HpDisplay::HpDisplay(int x, int y, Color &color, Color &heartColor, Mob *mob) : Component(x, y, color), mob(mob), heartColor(heartColor) {}
+HpDisplay::HpDisplay(int x, int y, Color &color, Color &heartColor, Mob *mob) : ColorfulComponent(x, y, color), mob(mob), heartColor(heartColor) {}
 
 void HpDisplay::setMob(Mob *mob) {
   this->mob = mob;

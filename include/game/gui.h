@@ -9,10 +9,10 @@ using std::vector;
 
 class GUI {
 private:
-  vector<Component *> &components;
+  vector<Component *> components;
 
 public:
-  GUI(vector<Component *> &components);
+  GUI(vector<Component *> components);
 
   void add(Component *comp);
   void remove(Component *comp);
