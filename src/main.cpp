@@ -50,6 +50,7 @@ int main() {
   ih.createFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
   ih.createFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
   ih.createFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, DEATH_MENU_INPUTSET);
 
   // Define colors
   Color bg(50, 50, 50);
@@ -71,10 +72,11 @@ int main() {
   vector<Entity *> entityList = {&block};
   VisibleTriggerZone takeDmgTrigger(3000, 40, 1500, 608, red, false, entityList, [&]() {
     block.takeDamage(1);
-    ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
-    ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
-
+    
     if (block.isAlive()) {
+      ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
+      ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
+
       block.setSpeedX(0);
       block.setSpeedY(0);
       block.setX(1000);
@@ -90,21 +92,15 @@ int main() {
   });
 
   // Define menu options
-  MenuOption respawn("respawn", [&]() {
-
-  });
-  MenuOption quit("quit", [&]() {
-
-  });
+  MenuOption respawn("respawn", [&]() {});
+  MenuOption quit("quit", [&]() {});
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
   // Center death(1080, 608, 0, 0, new Column(0, 0, {new Text("You Died", 44, 0, 0, red), new Column(0, 0, {new Text("respawn", 30, 0, 0, white), new Text("quit", 30, 0, 0, white)}, 10)}, 30));
   Menu *deathMenu = new Menu("You Died", {&respawn, &quit}, 0, 0, white, red, cyan);
   Center death(1080, 608, 0, 0, deathMenu);
-  vector<Component *>
-      components = {&hpDisplay};
-  GUI gui(components);
+  GUI gui({&hpDisplay});
 
   // Creates renderer
   Camera cam(60, 918, 400, 162, &block);
@@ -146,6 +142,9 @@ int main() {
   ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_SPACE, [&]() {
     block.jump();
   });
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_UP, [&]() {
+    block.jump();
+  });
 
   ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
     block.moveRight();
@@ -169,8 +168,36 @@ int main() {
     deathMenu->selectNext();
     cout << "next";
   });
+  ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_RETURN, [&]() {
+    deathMenu->click();
+  });
+  ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_SPACE, [&]() {
+    deathMenu->click();
+  });
 
-  while (wc.processMessages()) {
+  respawn.onClick = [&]() {
+    cam.setX(0);
+    block.setHp(3);
+    block.setX(40);
+    block.setY(30);
+    block.setSpeedX(0);
+    block.setSpeedY(0);
+    block.setMovingRight(false);
+    block.setMovingLeft(false);
+
+    gui.add(&hpDisplay);
+    gui.remove(&death);
+    renderer.appendMainground(&block);
+    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+    
+  };
+
+  quit.onClick = [&]() {
+    running = false;
+  };
+
+  while (running && wc.processMessages()) {
     wc.redraw();
 
     takeDmgTrigger.checkTrigger();

@@ -25,6 +25,7 @@ public:
   bool funcExists(int event, int set, int key) const;
 
   void setCurrentFuncSet(int event, int set);
+  int getCurrentFuncSet(int event);
 
   void createEventSet(int event);
   void createFuncSet(int event, int set);
