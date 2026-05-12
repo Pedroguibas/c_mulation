@@ -2,14 +2,14 @@
 #include "objects/color.h"
 #include <iostream>
 
-Column::Column(int x, int y, Color color, vector<Component *> children)
-    : Component(x, y, color), children(children), gap(0) {
+Column::Column(int x, int y, vector<Component *> children)
+    : Component(x, y), children(children), gap(0) {
   this->updateHeight();
   this->updateWidth();
 }
 
-Column::Column(int x, int y, Color color, vector<Component *> children, int gap)
-    : Component(x, y, color), children(children), gap(gap) {
+Column::Column(int x, int y, vector<Component *> children, int gap)
+    : Component(x, y), children(children), gap(gap) {
   this->updateHeight();
   this->updateWidth();
 }
@@ -57,4 +57,8 @@ void Column::draw(HDC canvas) {
   for (Component *comp : this->children) {
     comp->draw(canvas);
   }
+}
+
+vector<Component *> *Column::getChildren() {
+  return &this->children;
 }

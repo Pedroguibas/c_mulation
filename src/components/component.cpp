@@ -1,7 +1,7 @@
 #include "components/component.h"
 #include "objects/color.h"
 
-Component::Component(int x, int y, Color &color) : x(x), y(y), color(color) {}
+Component::Component(int x, int y) : x(x), y(y) {}
 
 void Component::setX(int x) {
   this->x = x;
@@ -14,13 +14,6 @@ void Component::setY(int y) {
 }
 int Component::getY() {
   return this->y;
-}
-
-void Component::setColor(Color &color) {
-  this->color = color;
-}
-Color &Component::getColor() {
-  return this->color;
 }
 
 void Component::setWidth(int w) {

@@ -5,15 +5,13 @@
 
 #include "components/component.h"
 
-class Color;
-
 class Center : public Component {
 private:
   Component *child;
 
 public:
-  Center(int widht, int height, int x, int y, Color color, Component *child);
-  Center(int widht, int x, int y, Color color, Component *child);
+  Center(int widht, int height, int x, int y, Component *child);
+  Center(int widht, int x, int y, Component *child);
   ~Center();
 
   void updateWidth() override;

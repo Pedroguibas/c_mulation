@@ -1,6 +1,7 @@
 #include "components/center.h"
 #include "components/column.h"
 #include "components/hpDisplay.h"
+#include "components/menu.h"
 #include "components/text.h"
 #include "game/camera.h"
 #include "game/gameController.h"
@@ -36,12 +37,19 @@ void setTimeout(int ms, function<void()> func) {
 }
 
 int main() {
+  // Declare stopper;
+  bool running = true;
+
   // Define Input sets
   const int DEFAULT_INPUTSET = 1;
   const int DISABLED_INPUTSET = 2;
+  const int DEATH_MENU_INPUTSET = 3;
   InputHandler ih;
   ih.createFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
   ih.createFuncSet(WM_KEYUP, DISABLED_INPUTSET);
+  ih.createFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+  ih.createFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
 
   // Define colors
   Color bg(50, 50, 50);
@@ -81,33 +89,19 @@ int main() {
     }
   });
 
-  // Define inputs
+  // Define menu options
+  MenuOption respawn("respawn", [&]() {
 
-  ih.createFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
-  ih.createFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
-  ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
-  ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
-  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_SPACE, [&]() {
-    block.jump();
   });
+  MenuOption quit("quit", [&]() {
 
-  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
-    block.moveRight();
-  });
-  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_LEFT, [&]() {
-    block.moveLeft();
-  });
-
-  ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
-    block.setMovingLeft(false);
-  });
-  ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_LEFT, [&]() {
-    block.setMovingRight(false);
   });
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
-  Center death(1080, 608, 0, 0, red, new Column(0, 0, red, {new Text("You Died", 44, 0, 0, red), new Column(0, 0, white, {new Text("respawn", 30, 0, 0, white), new Text("quit", 30, 0, 0, white)}, 10)}, 30));
+  // Center death(1080, 608, 0, 0, new Column(0, 0, {new Text("You Died", 44, 0, 0, red), new Column(0, 0, {new Text("respawn", 30, 0, 0, white), new Text("quit", 30, 0, 0, white)}, 10)}, 30));
+  Menu *deathMenu = new Menu("You Died", {&respawn, &quit}, 0, 0, white, red, cyan);
+  Center death(1080, 608, 0, 0, deathMenu);
   vector<Component *>
       components = {&hpDisplay};
   GUI gui(components);
@@ -132,6 +126,8 @@ int main() {
         break;
       }
     }
+    ih.setCurrentFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
+    // ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
     gui.add(&death);
     gui.remove(&hpDisplay);
   });
@@ -143,6 +139,36 @@ int main() {
 
   GameController gc(objectList, hitboxList, entityList, &cam, &boundry, 1250);
   gc.setLastTick();
+
+  // Define inputs
+  ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+  ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_SPACE, [&]() {
+    block.jump();
+  });
+
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
+    block.moveRight();
+  });
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_LEFT, [&]() {
+    block.moveLeft();
+  });
+
+  ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
+    block.setMovingLeft(false);
+  });
+  ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_LEFT, [&]() {
+    block.setMovingRight(false);
+  });
+
+  ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_UP, [&]() {
+    deathMenu->selectPrev();
+    cout << "prev";
+  });
+  ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_DOWN, [&]() {
+    deathMenu->selectNext();
+    cout << "next";
+  });
 
   while (wc.processMessages()) {
     wc.redraw();

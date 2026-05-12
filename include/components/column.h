@@ -7,16 +7,14 @@
 #include <vector>
 using std::vector;
 
-class Color;
-
 class Column : public Component {
 private:
   int gap;
   vector<Component *> children;
 
 public:
-  Column(int x, int y, Color color, vector<Component *> children);
-  Column(int x, int y, Color color, vector<Component *> children, int gap);
+  Column(int x, int y, vector<Component *> children);
+  Column(int x, int y, vector<Component *> children, int gap);
   ~Column();
 
   void updateHeight() override;
@@ -24,6 +22,8 @@ public:
 
   void setGap(int gap);
   int getGap();
+
+  vector<Component *> *getChildren();
 
   void draw(HDC canvas) override;
 };

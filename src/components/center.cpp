@@ -2,8 +2,8 @@
 #include "objects/color.h"
 #include <iostream>
 
-Center::Center(int width, int height, int x, int y, Color color, Component *child)
-    : Component(x, y, color), child(child) {
+Center::Center(int width, int height, int x, int y, Component *child)
+    : Component(x, y), child(child) {
   this->setWidth(width);
   this->setHeight(height);
 
@@ -11,8 +11,8 @@ Center::Center(int width, int height, int x, int y, Color color, Component *chil
   this->updateHeight();
 }
 
-Center::Center(int width, int x, int y, Color color, Component *child)
-    : Component(x, y, color), child(child) {
+Center::Center(int width, int x, int y, Component *child)
+    : Component(x, y), child(child) {
   this->setWidth(width);
   this->setHeight(-1);
 

@@ -3,11 +3,11 @@
 #ifndef HP_DISPLAY_H
 #define HP_DISPLAY_H
 
-#include "components/component.h"
+#include "components/colorfulComponent.h"
 
 class Mob;
 
-class HpDisplay : public Component {
+class HpDisplay : public ColorfulComponent {
 private:
   Mob *mob;
   Color &heartColor;
