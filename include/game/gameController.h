@@ -20,17 +20,16 @@ class Boundry;
 
 class GameController {
 private:
-  vector<Object *> &objects;
-  vector<HitboxObject *> &hitboxObjects;
-  vector<Entity *> &entities;
+  vector<HitboxObject *> hitboxObjects;
+  vector<Entity *> entities;
   float gravity = 1500;
   steady_clock::time_point lastTick;
   Camera *cam;
   Boundry *boundry;
 
 public:
-  GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry);
-  GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry, float g);
+  GameController(vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, Camera *cam, Boundry *boundry);
+  GameController(vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, Camera *cam, Boundry *boundry, float g);
 
   void update(float timespan);
 
@@ -46,6 +45,13 @@ public:
   void setCamera(Camera *cam);
 
   void setBoundry(Boundry *boundry);
+
+  void appendObject(Object *obj);
+  void removeObject(Object *obj);
+  void appendHitbox(HitboxObject *hitbox);
+  void removeHitbox(HitboxObject *hitbox);
+  void appendEntity(Entity *ent);
+  void removeEntity(Entity *ent);
 };
 
 #endif

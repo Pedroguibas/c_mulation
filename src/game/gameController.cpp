@@ -2,12 +2,14 @@
 #include "game/camera.h"
 #include "objects/boundry.h"
 #include <iostream>
+#include <algorithm>
+using std::find;
 
-GameController::GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry)
-    : objects(objects), hitboxObjects(hitboxObjects), entities(entities), cam(cam), boundry(boundry) {}
+GameController::GameController(vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, Camera *cam, Boundry *boundry)
+    : hitboxObjects(hitboxObjects), entities(entities), cam(cam), boundry(boundry) {}
 
-GameController::GameController(vector<Object *> &objects, vector<HitboxObject *> &hitboxObjects, vector<Entity *> &entities, Camera *cam, Boundry *boundry, float g)
-    : objects(objects), hitboxObjects(hitboxObjects), entities(entities), cam(cam), boundry(boundry) {
+GameController::GameController(vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, Camera *cam, Boundry *boundry, float g)
+    : hitboxObjects(hitboxObjects), entities(entities), cam(cam), boundry(boundry) {
   this->gravity = g;
 }
 
@@ -75,4 +77,34 @@ void GameController::setCamera(Camera *cam) {
 
 void GameController::setBoundry(Boundry *boundry) {
   this->boundry = boundry;
+}
+
+void GameController::appendHitbox(HitboxObject *hitbox) {
+  auto idx = find(this->hitboxObjects.begin(), this->hitboxObjects.end(), hitbox);
+  
+  if (idx == this->hitboxObjects.end())
+  this->hitboxObjects.push_back(hitbox);
+}
+void GameController::removeHitbox(HitboxObject *hitbox) {
+  auto idx = find(this->hitboxObjects.begin(), this->hitboxObjects.end(), hitbox);
+  
+  if (idx != this->hitboxObjects.end())
+  this->hitboxObjects.erase(idx);
+  
+}
+void GameController::appendEntity(Entity *ent) {
+  auto idx = find(this->entities.begin(), this->entities.end(), ent);
+  
+  if (idx == this->entities.end())
+    this->entities.push_back(ent);
+  
+  appendHitbox(ent);
+}
+void GameController::removeEntity(Entity *ent) {
+  auto idx = find(this->entities.begin(), this->entities.end(), ent);
+  
+  if (idx != this->entities.end())
+  this->entities.erase(idx);
+  
+  removeHitbox(ent);
 }

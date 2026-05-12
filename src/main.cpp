@@ -70,19 +70,19 @@ int main() {
   vector<Object *> objectList = {&ground, &box, &block};
   vector<HitboxObject *> hitboxList = {&ground, &box, &block};
   vector<Entity *> entityList = {&block};
-  VisibleTriggerZone takeDmgTrigger(3000, 40, 1500, 608, red, false, entityList, [&]() {
-    block.takeDamage(1);
+  VisibleTriggerZone takeDmgTrigger(3000, 40, 1500, 608, red, false, {&block}, [&](Mob *ent) {
+    ent->takeDamage(1);
     
-    if (block.isAlive()) {
+    if (ent->isAlive()) {
       ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
       ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
 
-      block.setSpeedX(0);
-      block.setSpeedY(0);
-      block.setX(1000);
-      block.setY(408);
-      block.setMovingRight(false);
-      block.setMovingLeft(false);
+      ent->setSpeedX(0);
+      ent->setSpeedY(0);
+      ent->setX(1000);
+      ent->setY(408);
+      ent->setMovingRight(false);
+      ent->setMovingLeft(false);
 
       setTimeout(500, [&]() {
         ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
@@ -133,7 +133,7 @@ int main() {
   int boundries[4] = {-500, 1500, 608, 0};
   Boundry boundry(boundries, wc.getWidth(), wc.getHeight());
 
-  GameController gc(objectList, hitboxList, entityList, &cam, &boundry, 1250);
+  GameController gc(hitboxList, entityList, &cam, &boundry, 1250);
   gc.setLastTick();
 
   // Define inputs
@@ -188,6 +188,8 @@ int main() {
     gui.add(&hpDisplay);
     gui.remove(&death);
     renderer.appendMainground(&block);
+    gc.appendEntity(&block);
+
     ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
     ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
     

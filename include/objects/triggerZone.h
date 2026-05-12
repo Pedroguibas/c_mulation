@@ -11,25 +11,26 @@ using std::function;
 
 class Entity;
 
+template <typename T>
 class TriggerZone : public Box {
 private:
   function<void()> func;
   bool single; // defines if can activate multiple times
-  vector<Entity *> observedEntities;
-  vector<Entity *> entitiesIn;
+  vector<T *> observedEntities;
+  vector<T *> entitiesIn;
 
-  void runFunc(Entity *ent);
-  void entityEnter(Entity *ent);
-  void entityLeave(Entity *ent);
+  void runFunc(T *ent);
+  void entityEnter(T *ent);
+  void entityLeave(T *ent);
 
 public:
-  TriggerZone(int width, int height, int x, int y, bool single, vector<Entity *> observedEntities, function<void()> func);
+  TriggerZone(int width, int height, int x, int y, bool single, vector<T *> observedEntities, function<void(T *ent)> func);
 
   void checkTrigger();
 
 
-  void observeEntity(Entity *ent);
-  void stopObservingEntity(Entity *ent);
+  void observeEntity(T *ent);
+  void stopObservingEntity(T *ent);
   
 };
 

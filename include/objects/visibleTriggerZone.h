@@ -6,13 +6,12 @@
 #include "objects/Object.h"
 #include "objects/triggerZone.h"
 
-class Entity;
-
+template <typename T>
 class VisibleTriggerZone : public Object, public TriggerZone {
 public:
-  VisibleTriggerZone(int width, int height, int x, int y, bool single, vector<Entity *> observedEntities, function<void()> func);
-  VisibleTriggerZone(int width, int height, int x, int y, Color color, bool single, vector<Entity *> observedEntities, function<void()> func);
-  VisibleTriggerZone(int width, int height, int x, int y, Color color, Color border, int borderThickness, bool single, vector<Entity *> observedEntities, function<void()> func);
+  VisibleTriggerZone(int width, int height, int x, int y, bool single, vector<T *> observedEntities, function<void(T *ent)> func);
+  VisibleTriggerZone(int width, int height, int x, int y, Color color, bool single, vector<T *> observedEntities, function<void(T *ent)> func);
+  VisibleTriggerZone(int width, int height, int x, int y, Color color, Color border, int borderThickness, bool single, vector<T *> observedEntities, function<void(T *ent)> func);
 };
 
 #endif
