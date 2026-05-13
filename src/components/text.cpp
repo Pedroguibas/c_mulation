@@ -13,10 +13,34 @@ Text::~Text() {
 }
 
 void Text::updateWidth() {
-  this->setWidth(this->fontSize * 0.55 * this->content.length());
+  HDC hdc = GetDC(NULL);
+
+  HFONT oldFont = (HFONT)SelectObject(hdc, this->font);
+
+  SIZE size;
+  GetTextExtentPoint32W(
+      hdc,
+      this->renderText.c_str(),
+      (int)this->renderText.length(),
+      &size);
+
+  this->setWidth(size.cx);
+
+  SelectObject(hdc, oldFont);
+  ReleaseDC(NULL, hdc);
 }
 void Text::updateHeight() {
-  this->setHeight(this->fontSize);
+  HDC hdc = GetDC(NULL);
+
+  HFONT oldFont = (HFONT)SelectObject(hdc, this->font);
+
+  TEXTMETRIC tm;
+  GetTextMetrics(hdc, &tm);
+
+  this->setHeight(tm.tmHeight);
+
+  SelectObject(hdc, oldFont);
+  ReleaseDC(NULL, hdc);
 }
 
 void Text::setContent(string content) {
@@ -29,8 +53,9 @@ string Text::getContent() {
 
 void Text::setFontSize(int size) {
   this->fontSize = size;
-  this->updateHeight();
-  this->updateWidth();
+
+  if (this->font != NULL)
+    DeleteObject(this->font);
 
   this->font = CreateFontW(
       this->fontSize,
@@ -44,6 +69,9 @@ void Text::setFontSize(int size) {
       CLEARTYPE_QUALITY,
       DEFAULT_PITCH | FF_DONTCARE,
       L"Arial");
+
+  this->updateHeight();
+  this->updateWidth();
 }
 
 wstring Text::utf8ToUtf16(const string &str) {
