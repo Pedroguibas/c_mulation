@@ -22,18 +22,78 @@
 
 ## Getting Started
 
-### Prerequisites
+### 1. Install MSYS2
 
-- Windows OS
-- [MinGW](https://www.mingw-w64.org/)
+Download and install from the [official MSYS2 page](https://www.msys2.org/), using the default directory:
 
-### Build & Run
+```
+C:\msys64
+```
 
-From **CMD** or the **MinGW terminal**, in the project root:
+### 2. Update packages
 
+Open the **MSYS2** terminal and run:
+
+```bash
+pacman -Syu
+```
+
+Close the terminal when prompted, reopen it, then run:
+
+```bash
+pacman -Su
+```
+
+### 3. Install the compiler and tools
+
+In the MSYS2 terminal:
+
+```bash
+pacman -S --needed \
+  mingw-w64-ucrt-x86_64-gcc \
+  mingw-w64-ucrt-x86_64-make
+```
+
+This installs `g++`, `gcc`, and `make`.
+
+### 4. Add MinGW to PATH
+
+Add the following folder to your Windows PATH:
+
+```
+C:\msys64\ucrt64\bin
+```
+
+Restart the MSYS2 terminal, then verify the installation:
+
+```bash
+g++ --version
+make --version
+```
+
+### 5. Build
+
+In the MSYS2 terminal, navigate to the project root and run:
+
+```bash
+make
+```
+
+This generates `c_mulation.exe`.
+
+### 6. Run
+
+From the MSYS2 terminal, in the project directory:
 ```bash
 ./c_mulation
 ```
+
+From CMD, in the project directory:
+```cmd
+c_mulation
+```
+
+Or double-click `c_mulation.exe` in the project folder.
 
 ---
 
@@ -42,29 +102,59 @@ From **CMD** or the **MinGW terminal**, in the project root:
 ```
 c_mulation/
 ├── include/
+│   ├── components/
+│   │   ├── center.h
+│   │   ├── colorfulComponent.h
+│   │   ├── column.h
+│   │   ├── component.h
+│   │   ├── hpDisplay.h
+│   │   ├── menu.h
+│   │   └── text.h
 │   ├── game/
 │   │   ├── camera.h
-│   │   └── gameController.h
+│   │   ├── gameController.h
+│   │   ├── gui.h
+│   │   └── inputHandler.h
 │   ├── objects/
 │   │   ├── boundry.h
+│   │   ├── box.h
 │   │   ├── color.h
 │   │   ├── entity.h
 │   │   ├── hitboxObject.h
-│   │   └── object.h
+│   │   ├── mob.h
+│   │   ├── object.h
+│   │   ├── triggerZone.h
+│   │   ├── triggerZone.tpp
+│   │   ├── triggerZoneBase.h
+│   │   ├── visibleTriggerZone.h
+│   │   └── visibleTriggerZone.tpp
 │   └── window/
-│       ├── inputHandler.h
+│       ├── renderer.h
 │       └── windowController.h
 ├── src/
+│   ├── components/
+│   │   ├── center.cpp
+│   │   ├── colorfulComponent.cpp
+│   │   ├── column.cpp
+│   │   ├── component.cpp
+│   │   ├── hpDisplay.cpp
+│   │   ├── menu.cpp
+│   │   └── text.cpp
 │   ├── game/
 │   │   ├── camera.cpp
-│   │   └── gameController.cpp
+│   │   ├── gameController.cpp
+│   │   ├── gui.cpp
+│   │   └── inputHandler.cpp
 │   ├── objects/
 │   │   ├── boundry.cpp
+│   │   ├── box.cpp
 │   │   ├── color.cpp
 │   │   ├── entity.cpp
 │   │   ├── hitboxObject.cpp
+│   │   ├── mob.cpp
 │   │   └── object.cpp
 │   ├── window/
+│   │   ├── renderer.cpp
 │   │   └── windowController.cpp
 │   └── main.cpp
 ├── makefile
@@ -91,12 +181,6 @@ This project was built to demonstrate:
 - How **game loops** and **fixed timesteps** work under the hood
 - Direct usage of the **Windows API** without abstraction layers
 - Fundamentals of **2D physics simulation**
-
----
-
-## License
-
-This project is open source.
 
 ---
 
