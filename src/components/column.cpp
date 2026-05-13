@@ -1,52 +1,46 @@
 #include "components/column.h"
-#include "objects/color.h"
+
 #include <iostream>
 
-Column::Column(int x, int y, vector<Component *> children)
-    : Component(x, y), children(children), gap(0) {
+#include "objects/color.h"
+
+Column::Column(vector<Component *> children) : Flex(children) {
   this->updateHeight();
   this->updateWidth();
 }
-
-Column::Column(int x, int y, vector<Component *> children, int gap)
-    : Component(x, y), children(children), gap(gap) {
+Column::Column(vector<Component *> children, int gap) : Flex(children, gap) {
   this->updateHeight();
   this->updateWidth();
 }
-
-Column::~Column() {
-  for (Component *comp : this->children)
-    delete comp;
+Column::Column(int x, int y, vector<Component *> children) : Flex(x, y, children) {
+  this->updateHeight();
+  this->updateWidth();
 }
-
-void Column::setGap(int gap) {
-  this->gap = gap;
-}
-int Column::getGap() {
-  return this->gap;
+Column::Column(int x, int y, vector<Component *> children, int gap) : Flex(x, y, children, gap) {
+  this->updateHeight();
+  this->updateWidth();
 }
 
 void Column::updateHeight() {
-  int totalHeight = this->getY();
+  int totalHeight = 0;
 
-  for (Component *comp : this->children) {
-    comp->setY(totalHeight);
-    totalHeight += comp->getHeight() + this->gap;
+  for (Component *comp : *this->getChildren()) {
+    comp->setY(this->getY() + totalHeight);
+    totalHeight += comp->getHeight() + this->getGap();
   }
+  totalHeight -= this->getGap();
 
   this->setHeight(totalHeight);
 }
 
 void Column::updateWidth() {
   int widest = 0;
-  for (Component *comp : this->children) {
+  for (Component *comp : *this->getChildren()) {
     if (widest < comp->getWidth())
       widest = comp->getWidth();
   }
 
-  for (Component *comp : this->children) {
-    comp->setX(this->getX() + widest / 2 - comp->getWidth() / 2);
-  }
+  for (Component *comp : *this->getChildren()) comp->setX(this->getX() + widest / 2 - comp->getWidth() / 2);
 
   this->setWidth(widest);
 }
@@ -54,11 +48,7 @@ void Column::updateWidth() {
 void Column::draw(HDC canvas) {
   this->updateHeight();
   this->updateWidth();
-  for (Component *comp : this->children) {
+  for (Component *comp : *this->getChildren()) {
     comp->draw(canvas);
   }
-}
-
-vector<Component *> *Column::getChildren() {
-  return &this->children;
 }

@@ -3,27 +3,21 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
-#include "components/component.h"
 #include <vector>
+
+#include "components/component.h"
+#include "components/flex.h"
 using std::vector;
 
-class Column : public Component {
-private:
-  int gap;
-  vector<Component *> children;
-
+class Column : public Flex {
 public:
+  Column(vector<Component *> children);
+  Column(vector<Component *> children, int gap);
   Column(int x, int y, vector<Component *> children);
   Column(int x, int y, vector<Component *> children, int gap);
-  ~Column();
 
   void updateHeight() override;
   void updateWidth() override;
-
-  void setGap(int gap);
-  int getGap();
-
-  vector<Component *> *getChildren();
 
   void draw(HDC canvas) override;
 };
