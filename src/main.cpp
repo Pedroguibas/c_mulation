@@ -1,7 +1,14 @@
+#include <algorithm>
+#include <chrono>
+#include <future>
+#include <iostream>
+#include <thread>
+
 #include "components/center.h"
 #include "components/column.h"
 #include "components/hpDisplay.h"
 #include "components/menu.h"
+#include "components/row.h"
 #include "components/text.h"
 #include "game/camera.h"
 #include "game/gameController.h"
@@ -15,11 +22,6 @@
 #include "objects/visibleTriggerZone.h"
 #include "window/renderer.h"
 #include "window/windowController.h"
-#include <algorithm>
-#include <chrono>
-#include <future>
-#include <iostream>
-#include <thread>
 using std::cout;
 using std::endl;
 using std::find;
@@ -107,7 +109,15 @@ int main() {
   Center centeredDeathMenu(1080, 608, 0, 0, deathMenu);
   Menu *mainMenu = new Menu("Main Menu", {&resume, &restart, &quit}, 0, 0, white, pink, cyan);
   Center centeredMainMenu(1080, 608, 0, 0, mainMenu);
-  GUI gui({&hpDisplay});
+  Center rowTest(1080,
+                 608,
+                 0,
+                 0,
+                 new Row({new Text("primeiro", 30, 0, 0, cyan),
+                          new Text("segundo", 30, 0, 0, cyan),
+                          new Text("terceiro", 30, 0, 0, cyan)},
+                         40));
+  GUI gui({&hpDisplay, &rowTest});
 
   // Creates renderer
   Camera cam(60, 918, 400, 162, &block);
