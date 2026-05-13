@@ -3,18 +3,21 @@
 #ifndef TRIGGER_ZONE_H
 #define TRIGGER_ZONE_H
 
-#include <vector>
-#include <functional>
 #include "objects/box.h"
-using std::vector;
+#include "objects/entity.h"
+#include "objects/triggerZoneBase.h"
+#include <functional>
+#include <vector>
 using std::function;
-
-class Entity;
+using std::vector;
 
 template <typename T>
-class TriggerZone : public Box {
+class TriggerZone : public Box, public TriggerZoneBase {
+  static_assert(std::is_base_of<Entity, T>::value,
+                "T must inherit from Entity");
+  function<void(T *ent)> func;
+
 private:
-  function<void()> func;
   bool single; // defines if can activate multiple times
   vector<T *> observedEntities;
   vector<T *> entitiesIn;
@@ -26,12 +29,12 @@ private:
 public:
   TriggerZone(int width, int height, int x, int y, bool single, vector<T *> observedEntities, function<void(T *ent)> func);
 
-  void checkTrigger();
-
+  void checkTrigger() override;
 
   void observeEntity(T *ent);
   void stopObservingEntity(T *ent);
-  
 };
+
+#include "triggerZone.tpp"
 
 #endif

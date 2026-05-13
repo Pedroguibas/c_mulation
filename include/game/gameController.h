@@ -5,7 +5,9 @@
 
 #include "objects/HitboxObject.h"
 #include "objects/entity.h"
+#include "objects/mob.h"
 #include "objects/object.h"
+#include "objects/triggerZoneBase.h"
 #include <chrono>
 #include <cmath>
 #include <vector>
@@ -22,18 +24,22 @@ class GameController {
 private:
   vector<HitboxObject *> hitboxObjects;
   vector<Entity *> entities;
+  vector<TriggerZoneBase *> triggerZones;
+  Mob *player;
   float gravity = 1500;
   steady_clock::time_point lastTick;
   Camera *cam;
   Boundry *boundry;
 
 public:
-  GameController(vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, Camera *cam, Boundry *boundry);
-  GameController(vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, Camera *cam, Boundry *boundry, float g);
+  GameController(Mob *player, vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, vector<TriggerZoneBase *> triggerZones, Camera *cam, Boundry *boundry);
+  GameController(Mob *player, vector<HitboxObject *> hitboxObjects, vector<Entity *> entities, vector<TriggerZoneBase *> triggerZones, Camera *cam, Boundry *boundry, float g);
 
   void update(float timespan);
 
   void checkCollisions();
+  void checkPlayerCollisions();
+  void checkTriggers();
 
   void loopTick();
 
@@ -46,8 +52,10 @@ public:
 
   void setBoundry(Boundry *boundry);
 
-  void appendObject(Object *obj);
-  void removeObject(Object *obj);
+  void setPlayer(Mob *player);
+
+  void appendTriggerZone(TriggerZoneBase *triggerZone);
+  void removeTriggerZone(TriggerZoneBase *triggerZone);
   void appendHitbox(HitboxObject *hitbox);
   void removeHitbox(HitboxObject *hitbox);
   void appendEntity(Entity *ent);
