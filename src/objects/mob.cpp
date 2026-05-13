@@ -20,11 +20,13 @@ bool Mob::isInvincible() {
 
 void Mob::setHp(int hp) {
   this->hp = hp;
-  
-  if (hp > 0)
+
+  if (hp > 0) {
     this->setAlive(true);
-  else
+  } else {
     this->setAlive(false);
+    this->die();
+  }
 }
 int Mob::getHp() {
   return this->hp;
@@ -38,10 +40,7 @@ bool Mob::isAlive() {
 }
 
 void Mob::takeDamage(int dmg) {
-  this->hp -= dmg;
-
-  if (this->getHp() <= 0)
-    this->die();
+  this->setHp(this->hp - dmg);
 }
 
 void Mob::die() {

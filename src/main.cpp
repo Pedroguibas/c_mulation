@@ -20,7 +20,6 @@
 #include <future>
 #include <iostream>
 #include <thread>
-using std::cin;
 using std::cout;
 using std::endl;
 using std::find;
@@ -68,21 +67,20 @@ int main() {
 
   // Creates lists
   vector<Object *> objectList = {&ground, &box, &block};
-  vector<HitboxObject *> hitboxList = {&ground, &box, &block};
-  vector<Entity *> entityList = {&block};
-  VisibleTriggerZone takeDmgTrigger(3000, 40, 1500, 608, red, false, entityList, [&]() {
-    block.takeDamage(1);
-    
-    if (block.isAlive()) {
+  vector<HitboxObject *> hitboxList = {&ground, &box};
+  VisibleTriggerZone<Mob> takeDmgTrigger(3000, 40, 1500, 608, red, false, {&block}, [&](Mob *ent) {
+    ent->takeDamage(1);
+
+    if (ent->isAlive()) {
       ih.setCurrentFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
       ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
 
-      block.setSpeedX(0);
-      block.setSpeedY(0);
-      block.setX(1000);
-      block.setY(408);
-      block.setMovingRight(false);
-      block.setMovingLeft(false);
+      ent->setSpeedX(0);
+      ent->setSpeedY(0);
+      ent->setX(1000);
+      ent->setY(408);
+      ent->setMovingRight(false);
+      ent->setMovingLeft(false);
 
       setTimeout(500, [&]() {
         ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
@@ -107,34 +105,24 @@ int main() {
   Renderer renderer(cam, gui);
   renderer.appendMainground(objectList);
   renderer.appendBackground(&takeDmgTrigger);
-  // stop rendering block after it's death
-  block.setOnDeath([&]() {
-    renderer.removeMainground(&block);
-    for (int i = 0; i < hitboxList.size(); i++) {
-      if (hitboxList[i] == &block) {
-        hitboxList.erase(hitboxList.begin() + i);
-        break;
-      }
-    }
-    for (int i = 0; i < entityList.size(); i++) {
-      if (entityList[i] == &block) {
-        entityList.erase(entityList.begin() + i);
-        break;
-      }
-    }
-    ih.setCurrentFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
-    // ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
-    gui.add(&death);
-    gui.remove(&hpDisplay);
-  });
 
   // Create Window and boundries
   WindowController wc(1080, 608, renderer, gui, ih);
   int boundries[4] = {-500, 1500, 608, 0};
   Boundry boundry(boundries, wc.getWidth(), wc.getHeight());
 
-  GameController gc(objectList, hitboxList, entityList, &cam, &boundry, 1250);
+  GameController gc(&block, hitboxList, {}, {&takeDmgTrigger}, &cam, &boundry, 1250);
   gc.setLastTick();
+
+  // stop rendering block after it's death
+  block.setOnDeath([&]() {
+    renderer.removeMainground(&block);
+    gc.setPlayer(nullptr);
+    ih.setCurrentFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
+    // ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
+    gui.add(&death);
+    gui.remove(&hpDisplay);
+  });
 
   // Define inputs
   ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
@@ -162,11 +150,9 @@ int main() {
 
   ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_UP, [&]() {
     deathMenu->selectPrev();
-    cout << "prev";
   });
   ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_DOWN, [&]() {
     deathMenu->selectNext();
-    cout << "next";
   });
   ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_RETURN, [&]() {
     deathMenu->click();
@@ -188,9 +174,10 @@ int main() {
     gui.add(&hpDisplay);
     gui.remove(&death);
     renderer.appendMainground(&block);
+    gc.appendEntity(&block);
+
     ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
     ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
-    
   };
 
   quit.onClick = [&]() {
@@ -199,8 +186,6 @@ int main() {
 
   while (running && wc.processMessages()) {
     wc.redraw();
-
-    takeDmgTrigger.checkTrigger();
 
     gc.loopTick();
 
