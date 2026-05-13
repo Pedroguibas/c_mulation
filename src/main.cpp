@@ -38,11 +38,13 @@ void setTimeout(int ms, function<void()> func) {
 int main() {
   // Declare stopper;
   bool running = true;
+  bool paused = false;
 
   // Define Input sets
   const int DEFAULT_INPUTSET = 1;
   const int DISABLED_INPUTSET = 2;
   const int DEATH_MENU_INPUTSET = 3;
+  const int MAIN_MENU_INPUTSET = 4;
   InputHandler ih;
   ih.createFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
   ih.createFuncSet(WM_KEYUP, DISABLED_INPUTSET);
@@ -50,6 +52,8 @@ int main() {
   ih.createFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
   ih.createFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
   ih.createFuncSet(WM_KEYUP, DEATH_MENU_INPUTSET);
+  ih.createFuncSet(WM_KEYDOWN, MAIN_MENU_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, MAIN_MENU_INPUTSET);
 
   // Define colors
   Color bg(50, 50, 50);
@@ -89,15 +93,20 @@ int main() {
     }
   });
 
-  // Define menu options
-  MenuOption respawn("respawn", [&]() {});
-  MenuOption quit("quit", [&]() {});
+  // Define death menu options
+  MenuOption respawn("respawn", []() {});
+  MenuOption quit("quit", []() {});
+
+  // Define main menu options
+  MenuOption resume("resume", []() {});
+  MenuOption restart("restart", []() {});
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
-  // Center death(1080, 608, 0, 0, new Column(0, 0, {new Text("You Died", 44, 0, 0, red), new Column(0, 0, {new Text("respawn", 30, 0, 0, white), new Text("quit", 30, 0, 0, white)}, 10)}, 30));
   Menu *deathMenu = new Menu("You Died", {&respawn, &quit}, 0, 0, white, red, cyan);
-  Center death(1080, 608, 0, 0, deathMenu);
+  Center centeredDeathMenu(1080, 608, 0, 0, deathMenu);
+  Menu *mainMenu = new Menu("Main Menu", {&resume, &restart, &quit}, 0, 0, white, pink, cyan);
+  Center centeredMainMenu(1080, 608, 0, 0, mainMenu);
   GUI gui({&hpDisplay});
 
   // Creates renderer
@@ -116,24 +125,26 @@ int main() {
 
   // stop rendering block after it's death
   block.setOnDeath([&]() {
+    paused = true;
     renderer.removeMainground(&block);
     gc.setPlayer(nullptr);
     ih.setCurrentFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
-    // ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
-    gui.add(&death);
+    ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
+    gui.add(&centeredDeathMenu);
     gui.remove(&hpDisplay);
   });
 
   // Define inputs
   ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
   ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+
+  // Default inputset
   ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_SPACE, [&]() {
     block.jump();
   });
   ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_UP, [&]() {
     block.jump();
   });
-
   ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
     block.moveRight();
   });
@@ -147,7 +158,34 @@ int main() {
   ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_LEFT, [&]() {
     block.setMovingRight(false);
   });
+  ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_ESCAPE, [&]() {
+    paused = true;
+    gui.add(&centeredMainMenu);
+    ih.setCurrentFuncSet(WM_KEYDOWN, MAIN_MENU_INPUTSET);
+    ih.setCurrentFuncSet(WM_KEYUP, MAIN_MENU_INPUTSET);
+  });
 
+  // Main menu inputset
+  ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_ESCAPE, [&]() {
+    paused = false;
+    gui.remove(&centeredMainMenu);
+    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+  });
+  ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_UP, [&]() {
+    mainMenu->selectPrev();
+  });
+  ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_DOWN, [&]() {
+    mainMenu->selectNext();
+  });
+  ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_RETURN, [&]() {
+    mainMenu->click();
+  });
+  ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_SPACE, [&]() {
+    mainMenu->click();
+  });
+
+  // Death menu inputset
   ih.insertFunc(WM_KEYDOWN, DEATH_MENU_INPUTSET, VK_UP, [&]() {
     deathMenu->selectPrev();
   });
@@ -172,12 +210,37 @@ int main() {
     block.setMovingLeft(false);
 
     gui.add(&hpDisplay);
-    gui.remove(&death);
+    gui.remove(&centeredDeathMenu);
     renderer.appendMainground(&block);
     gc.appendEntity(&block);
 
     ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
     ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+    paused = false;
+  };
+
+  restart.onClick = [&]() {
+    cam.setX(0);
+    block.setHp(3);
+    block.setX(40);
+    block.setY(30);
+    block.setSpeedX(0);
+    block.setSpeedY(0);
+    block.setMovingRight(false);
+    block.setMovingLeft(false);
+
+    gui.remove(&centeredMainMenu);
+
+    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+    paused = false;
+  };
+
+  resume.onClick = [&]() {
+    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
+    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+    gui.remove(&centeredMainMenu);
+    paused = false;
   };
 
   quit.onClick = [&]() {
@@ -187,7 +250,8 @@ int main() {
   while (running && wc.processMessages()) {
     wc.redraw();
 
-    gc.loopTick();
+    if (!paused)
+      gc.loopTick();
 
     sleep_for(milliseconds(1));
   }
