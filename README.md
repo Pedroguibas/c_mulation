@@ -64,7 +64,7 @@ Add the following folder to your Windows PATH:
 C:\msys64\ucrt64\bin
 ```
 
-Restart the MSYS2 terminal, then verify the installation:
+Restart the MSYS2 UCRT64 terminal, then verify the installation:
 
 ```bash
 g++ --version
@@ -76,7 +76,7 @@ make --version
 In the MSYS2 terminal, navigate to the project root and run:
 
 ```bash
-make
+mingw32-make
 ```
 
 This generates `c_mulation.exe`.
