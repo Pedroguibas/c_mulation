@@ -85,11 +85,13 @@ This generates `c_mulation.exe`.
 ### 6. Run
 
 From the MSYS2 terminal, in the project directory:
+
 ```bash
 ./c_mulation
 ```
 
 From CMD, in the project directory:
+
 ```cmd
 c_mulation
 ```
@@ -102,6 +104,8 @@ Or double-click `c_mulation.exe` in the project folder.
 
 ```
 c_mulation/
+├── .vscode/
+│   └── settings.json
 ├── include/
 │   ├── components/
 │   │   ├── center.h
@@ -168,6 +172,9 @@ c_mulation/
 │   │   ├── renderer.cpp
 │   │   └── windowController.cpp
 │   └── main.cpp
+├── .clang-format
+├── .gitignore
+├── .prettierrc
 ├── makefile
 └── README.md
 ```
@@ -177,9 +184,11 @@ c_mulation/
 ## Design Highlights
 
 ### Pragmatic Win32 Abstraction
+
 The `WindowController` wraps the noisier parts of the Windows API — window registration, the message loop, and lifecycle management — into a more approachable interface, scoped specifically to what this kind of simulation needs. It's not a general-purpose UI toolkit; just enough abstraction to keep simulation logic clean without losing sight of what's happening underneath.
 
 ### OOP-Driven Simulation
+
 Physics entities are represented as objects with encapsulated state (position, velocity, mass) and behavior (update, collide, draw). This mirrors the architecture used in real game engines and makes the codebase easy to extend.
 
 ---
@@ -195,4 +204,4 @@ This project was built to demonstrate:
 
 ---
 
-*Built with C++ and the Windows API — no engines, no shortcuts.*
+_Built with C++ and the Windows API — no engines, no shortcuts._
