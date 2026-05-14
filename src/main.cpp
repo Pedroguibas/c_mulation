@@ -50,6 +50,7 @@ int main() {
   const int DEATH_MENU_INPUTSET = 3;
   const int MAIN_MENU_INPUTSET = 4;
   const int QUIT_CONFIRM_MENU_INPUTSET = 5;
+  const int VICTORY_MENU_INPUTSET = 6;
 
   InputHandler ih;
   ih.createFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
@@ -60,6 +61,8 @@ int main() {
   ih.createFuncSet(WM_KEYUP, DEATH_MENU_INPUTSET);
   ih.createFuncSet(WM_KEYDOWN, MAIN_MENU_INPUTSET);
   ih.createFuncSet(WM_KEYUP, MAIN_MENU_INPUTSET);
+  ih.createFuncSet(WM_KEYDOWN, VICTORY_MENU_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, VICTORY_MENU_INPUTSET);
   ih.createFuncSet(WM_KEYDOWN, QUIT_CONFIRM_MENU_INPUTSET);
   ih.createFuncSet(WM_KEYUP, QUIT_CONFIRM_MENU_INPUTSET);
 
@@ -67,20 +70,22 @@ int main() {
   Color bg(50, 50, 50);
   Color cyan(0, 255, 255);
   Color red(255, 0, 0);
+  Color green(0, 255, 0);
   Color pink(255, 0, 255);
   Color white(255, 255, 255);
+  Color black(0, 0, 0);
 
   // Creates objects
+  Object s1(30, 30, 1625, 343, black), s2(30, 30, 1655, 343, white), s3(30, 30, 1625, 373, white),
+      s4(30, 30, 1655, 373, black), s5(30, 30, 1625, 403, black), s6(30, 30, 1655, 403, white),
+      s7(30, 30, 1625, 433, white), s8(30, 30, 1655, 433, black), s9(30, 30, 1625, 463, black),
+      s10(30, 30, 1655, 463, white), s11(30, 30, 1625, 493, white), s12(30, 30, 1655, 493, black);
   HitboxObject ground(1100, 200, 540, 608, bg, cyan, 2);
+  HitboxObject finishGround(500, 200, 1640, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
   Mob block(40, 40, 3, 40, 30, pink);
-
-  block.setMaxSpeedX(500);
-
-  // Creates lists
-  vector<Object *> objectList = {&ground, &box, &block};
-  vector<HitboxObject *> hitboxList = {&ground, &box};
-  VisibleTriggerZone<Mob> takeDmgTrigger(3000, 40, 1500, 608, red, false, {&block}, [&](Mob *ent) {
+  vector<HitboxObject *> hitboxList = {&ground, &finishGround, &box};
+  VisibleTriggerZone<Mob> takeDmgTrigger(320, 50, 1240, 608, red, false, {&block}, [&](Mob *ent) {
     ent->takeDamage(1);
 
     if (ent->isAlive()) {
@@ -101,6 +106,8 @@ int main() {
     }
   });
 
+  block.setMaxSpeedX(500);
+
   // Define death menu options
   MenuOption respawn("respawn", []() {});
   MenuOption quit("quit", []() {});
@@ -115,27 +122,36 @@ int main() {
 
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
-  ColMenu *deathMenu = new ColMenu("You Died", {&respawn, &quit}, white, red, cyan);
+  ColMenu *deathMenu = new ColMenu("You Died!!!", {&respawn, &quit}, white, red, cyan);
   Center centeredDeathMenu(1080, 608, 0, 0, deathMenu);
   ColMenu *mainMenu = new ColMenu("Main Menu", {&resume, &restart, &quit}, white, pink, cyan);
   Center centeredMainMenu(1080, 608, 0, 0, mainMenu);
+  ColMenu *victoryMenu = new ColMenu("You Won!!", {&restart, &quit}, white, green, cyan);
+  Center centeredVictoryMenu(1080, 608, 0, 0, victoryMenu);
   RowMenu *quitConfirmMenu = new RowMenu("Sure you want to quit?", {&quitCancel, &quitConfirm}, white, red, cyan);
   Center centeredQuitConfirmMenu(1080, 608, 0, 0, quitConfirmMenu);
   GUI gui({&hpDisplay});
   MenuStack menuStack(&gui, &ih);
 
+  // defines win triggerzone
+  TriggerZone<Mob> victoryTriggerZone(30, 120, 1655, 448, false, {&block}, [&](Mob *ent) {
+    menuStack.push(&centeredVictoryMenu, VICTORY_MENU_INPUTSET);
+    paused = true;
+  });
+
   // Creates renderer
   Camera cam(60, 918, 400, 162, &block);
   Renderer renderer(cam, gui);
-  renderer.appendMainground(objectList);
+  renderer.appendMainground({&ground, &finishGround, &box, &block});
   renderer.appendBackground(&takeDmgTrigger);
+  renderer.appendBackground({&s1, &s2, &s3, &s4, &s5, &s6, &s7, &s8, &s9, &s10, &s11, &s12});
 
   // Create Window and boundries
   WindowController wc(1080, 608, renderer, gui, ih);
-  int boundries[4] = {-500, 1500, 608, 0};
+  int boundries[4] = {-500, 1880, 608, 0};
   Boundry boundry(boundries, wc.getWidth(), wc.getHeight());
 
-  GameController gc(&block, hitboxList, {}, {&takeDmgTrigger}, &cam, &boundry, 1250);
+  GameController gc(&block, hitboxList, {}, {&takeDmgTrigger, &victoryTriggerZone}, &cam, &boundry, 1250);
   gc.setLastTick();
 
   // stop rendering block after it's death
@@ -167,10 +183,10 @@ int main() {
   });
 
   ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_RIGHT, [&]() {
-    block.setMovingLeft(false);
+    block.setMovingRight(false);
   });
   ih.insertFunc(WM_KEYUP, DEFAULT_INPUTSET, VK_LEFT, [&]() {
-    block.setMovingRight(false);
+    block.setMovingLeft(false);
   });
   ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_ESCAPE, [&]() {
     paused = true;
@@ -194,6 +210,20 @@ int main() {
   });
   ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_SPACE, [&]() {
     mainMenu->click();
+  });
+
+  // Victory menu inputset
+  ih.insertFunc(WM_KEYDOWN, VICTORY_MENU_INPUTSET, VK_UP, [&]() {
+    victoryMenu->selectPrev();
+  });
+  ih.insertFunc(WM_KEYDOWN, VICTORY_MENU_INPUTSET, VK_DOWN, [&]() {
+    victoryMenu->selectNext();
+  });
+  ih.insertFunc(WM_KEYDOWN, VICTORY_MENU_INPUTSET, VK_RETURN, [&]() {
+    victoryMenu->click();
+  });
+  ih.insertFunc(WM_KEYDOWN, VICTORY_MENU_INPUTSET, VK_SPACE, [&]() {
+    victoryMenu->click();
   });
 
   // Death menu inputset
@@ -252,6 +282,7 @@ int main() {
     block.setMovingLeft(false);
 
     menuStack.pop();
+    mainMenu->selectFirst();
     paused = false;
   };
 
