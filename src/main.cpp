@@ -5,14 +5,16 @@
 #include <thread>
 
 #include "components/center.h"
+#include "components/colMenu.h"
 #include "components/column.h"
 #include "components/hpDisplay.h"
-#include "components/menu.h"
 #include "components/row.h"
+#include "components/rowMenu.h"
 #include "components/text.h"
 #include "game/camera.h"
 #include "game/gameController.h"
 #include "game/gui.h"
+#include "game/menuStack.h"
 #include "objects/boundry.h"
 #include "objects/entity.h"
 #include "objects/hitboxObject.h"
@@ -47,6 +49,8 @@ int main() {
   const int DISABLED_INPUTSET = 2;
   const int DEATH_MENU_INPUTSET = 3;
   const int MAIN_MENU_INPUTSET = 4;
+  const int QUIT_CONFIRM_MENU_INPUTSET = 5;
+
   InputHandler ih;
   ih.createFuncSet(WM_KEYDOWN, DISABLED_INPUTSET);
   ih.createFuncSet(WM_KEYUP, DISABLED_INPUTSET);
@@ -56,6 +60,8 @@ int main() {
   ih.createFuncSet(WM_KEYUP, DEATH_MENU_INPUTSET);
   ih.createFuncSet(WM_KEYDOWN, MAIN_MENU_INPUTSET);
   ih.createFuncSet(WM_KEYUP, MAIN_MENU_INPUTSET);
+  ih.createFuncSet(WM_KEYDOWN, QUIT_CONFIRM_MENU_INPUTSET);
+  ih.createFuncSet(WM_KEYUP, QUIT_CONFIRM_MENU_INPUTSET);
 
   // Define colors
   Color bg(50, 50, 50);
@@ -103,21 +109,20 @@ int main() {
   MenuOption resume("resume", []() {});
   MenuOption restart("restart", []() {});
 
+  // Define quite confirm menu options
+  MenuOption quitConfirm("quit", []() {});
+  MenuOption quitCancel("cancel", []() {});
+
   // Define GUI components
   HpDisplay hpDisplay(40, 20, white, red, &block);
-  Menu *deathMenu = new Menu("You Died", {&respawn, &quit}, 0, 0, white, red, cyan);
+  ColMenu *deathMenu = new ColMenu("You Died", {&respawn, &quit}, white, red, cyan);
   Center centeredDeathMenu(1080, 608, 0, 0, deathMenu);
-  Menu *mainMenu = new Menu("Main Menu", {&resume, &restart, &quit}, 0, 0, white, pink, cyan);
+  ColMenu *mainMenu = new ColMenu("Main Menu", {&resume, &restart, &quit}, white, pink, cyan);
   Center centeredMainMenu(1080, 608, 0, 0, mainMenu);
-  Center rowTest(1080,
-                 608,
-                 0,
-                 0,
-                 new Row({new Text("primeiro", 30, 0, 0, cyan),
-                          new Text("segundo", 30, 0, 0, cyan),
-                          new Text("terceiro", 30, 0, 0, cyan)},
-                         40));
-  GUI gui({&hpDisplay, &rowTest});
+  RowMenu *quitConfirmMenu = new RowMenu("Sure you want to quit?", {&quitCancel, &quitConfirm}, white, red, cyan);
+  Center centeredQuitConfirmMenu(1080, 608, 0, 0, quitConfirmMenu);
+  GUI gui({&hpDisplay});
+  MenuStack menuStack(&gui, &ih);
 
   // Creates renderer
   Camera cam(60, 918, 400, 162, &block);
@@ -138,9 +143,8 @@ int main() {
     paused = true;
     renderer.removeMainground(&block);
     gc.setPlayer(nullptr);
-    ih.setCurrentFuncSet(WM_KEYDOWN, DEATH_MENU_INPUTSET);
-    ih.setCurrentFuncSet(WM_KEYUP, DISABLED_INPUTSET);
-    gui.add(&centeredDeathMenu);
+    menuStack.push(&centeredDeathMenu, DEATH_MENU_INPUTSET);
+
     gui.remove(&hpDisplay);
   });
 
@@ -170,17 +174,14 @@ int main() {
   });
   ih.insertFunc(WM_KEYDOWN, DEFAULT_INPUTSET, VK_ESCAPE, [&]() {
     paused = true;
-    gui.add(&centeredMainMenu);
-    ih.setCurrentFuncSet(WM_KEYDOWN, MAIN_MENU_INPUTSET);
-    ih.setCurrentFuncSet(WM_KEYUP, MAIN_MENU_INPUTSET);
+    menuStack.push(&centeredMainMenu, MAIN_MENU_INPUTSET);
   });
 
   // Main menu inputset
   ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_ESCAPE, [&]() {
     paused = false;
-    gui.remove(&centeredMainMenu);
-    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
-    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+    mainMenu->selectFirst();
+    menuStack.pop();
   });
   ih.insertFunc(WM_KEYDOWN, MAIN_MENU_INPUTSET, VK_UP, [&]() {
     mainMenu->selectPrev();
@@ -209,6 +210,20 @@ int main() {
     deathMenu->click();
   });
 
+  // Quit confirm menu inputset
+  ih.insertFunc(WM_KEYDOWN, QUIT_CONFIRM_MENU_INPUTSET, VK_LEFT, [&]() {
+    quitConfirmMenu->selectPrev();
+  });
+  ih.insertFunc(WM_KEYDOWN, QUIT_CONFIRM_MENU_INPUTSET, VK_RIGHT, [&]() {
+    quitConfirmMenu->selectNext();
+  });
+  ih.insertFunc(WM_KEYDOWN, QUIT_CONFIRM_MENU_INPUTSET, VK_RETURN, [&]() {
+    quitConfirmMenu->click();
+  });
+  ih.insertFunc(WM_KEYDOWN, QUIT_CONFIRM_MENU_INPUTSET, VK_SPACE, [&]() {
+    quitConfirmMenu->click();
+  });
+
   respawn.onClick = [&]() {
     cam.setX(0);
     block.setHp(3);
@@ -220,12 +235,9 @@ int main() {
     block.setMovingLeft(false);
 
     gui.add(&hpDisplay);
-    gui.remove(&centeredDeathMenu);
+    menuStack.pop();
     renderer.appendMainground(&block);
     gc.appendEntity(&block);
-
-    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
-    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
     paused = false;
   };
 
@@ -239,21 +251,24 @@ int main() {
     block.setMovingRight(false);
     block.setMovingLeft(false);
 
-    gui.remove(&centeredMainMenu);
-
-    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
-    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
+    menuStack.pop();
     paused = false;
   };
 
   resume.onClick = [&]() {
-    ih.setCurrentFuncSet(WM_KEYDOWN, DEFAULT_INPUTSET);
-    ih.setCurrentFuncSet(WM_KEYUP, DEFAULT_INPUTSET);
-    gui.remove(&centeredMainMenu);
+    menuStack.pop();
     paused = false;
   };
 
   quit.onClick = [&]() {
+    menuStack.push(&centeredQuitConfirmMenu, QUIT_CONFIRM_MENU_INPUTSET);
+  };
+
+  quitCancel.onClick = [&]() {
+    menuStack.pop();
+  };
+
+  quitConfirm.onClick = [&]() {
     running = false;
   };
 
