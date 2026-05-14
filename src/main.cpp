@@ -134,7 +134,7 @@ int main() {
   MenuStack menuStack(&gui, &ih);
 
   // defines win triggerzone
-  TriggerZone<Mob> victoryTriggerZone(30, 120, 1655, 448, false, {&block}, [&](Mob *ent) {
+  TriggerZone<Mob> victoryTriggerZone(30, 180, 1655, 418, false, {&block}, [&](Mob *ent) {
     menuStack.push(&centeredVictoryMenu, VICTORY_MENU_INPUTSET);
     paused = true;
   });
