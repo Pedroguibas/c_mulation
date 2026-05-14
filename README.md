@@ -73,9 +73,10 @@ make --version
 
 ### 5. Build
 
-In the MSYS2 terminal, navigate to the project root and run:
+In the MSYS2 terminal, navigate to the project root and run the make command:
 
 ```bash
+cd /c/path/to/c_mulation
 mingw32-make
 ```
 
