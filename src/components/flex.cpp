@@ -46,14 +46,20 @@ int Flex::getGap() {
 void Flex::appendChild(Component *comp) {
   auto idx = find(this->children.begin(), this->children.end(), comp);
 
-  if (idx == this->children.end())
+  if (idx == this->children.end()) {
     this->children.push_back(comp);
+    this->updateHeight();
+    this->updateWidth();
+  }
 }
 void Flex::removeChild(Component *comp) {
   auto idx = find(this->children.begin(), this->children.end(), comp);
 
-  if (idx != this->children.end())
+  if (idx != this->children.end()) {
     this->children.erase(idx);
+    this->updateHeight();
+    this->updateWidth();
+  }
 }
 vector<Component *> *Flex::getChildren() {
   return &this->children;

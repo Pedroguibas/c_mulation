@@ -3,11 +3,12 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "components/colorfulComponent.h"
-#include "components/column.h"
 #include <functional>
 #include <string>
 #include <vector>
+
+#include "components/colorfulComponent.h"
+#include "components/column.h"
 using std::function;
 using std::string;
 using std::vector;
@@ -24,17 +25,24 @@ private:
   string title;
   int selected = 0;
   vector<MenuOption *> options;
-  Column *col;
   Color &titleColor;
   Color &selectedColor;
+  Column *col;
 
 public:
   Menu(string title, vector<MenuOption *> options, int x, int y, Color &color, Color &titleColor, Color &selectedColor);
   ~Menu();
 
-  void selectPrev();
-  void selectNext();
+  int getSelected();
+  virtual void selectFirst();
+  virtual void selectPrev();
+  virtual void selectNext();
   void click();
+
+  Column *getMainCol();
+
+  Color &getTitleColor();
+  Color &getSelectedColor();
 
   void setX(int x) override;
   void setY(int y) override;
