@@ -20,6 +20,7 @@
 #include "objects/hitboxObject.h"
 #include "objects/mob.h"
 #include "objects/object.h"
+#include "objects/scriptedMob.h"
 #include "objects/triggerZone.h"
 #include "objects/visibleTriggerZone.h"
 #include "window/renderer.h"
@@ -73,6 +74,7 @@ int main() {
   Color green(0, 255, 0);
   Color pink(255, 0, 255);
   Color white(255, 255, 255);
+  Color orange(255, 75, 75);
   Color black(0, 0, 0);
 
   // Creates objects
@@ -84,7 +86,9 @@ int main() {
   HitboxObject finishGround(500, 200, 1640, 608, bg, cyan, 2);
   HitboxObject box(100, 400, 220, 308, bg, red, 2);
   Mob block(40, 40, 3, 40, 30, pink);
-  vector<HitboxObject *> hitboxList = {&ground, &finishGround, &box};
+  ScriptedMob enemy(40, 40, 1, 400, 486, orange, orange, 0, 200, 1000);
+
+  vector<HitboxObject *> hitboxList = {&ground, &finishGround, &box, &enemy};
   VisibleTriggerZone<Mob> takeDmgTrigger(320, 50, 1240, 608, red, false, {&block}, [&](Mob *ent) {
     ent->takeDamage(1);
 
@@ -142,7 +146,7 @@ int main() {
   // Creates renderer
   Camera cam(60, 918, 400, 162, &block);
   Renderer renderer(cam, gui);
-  renderer.appendMainground({&ground, &finishGround, &box, &block});
+  renderer.appendMainground({&ground, &finishGround, &box, &block, &enemy});
   renderer.appendBackground(&takeDmgTrigger);
   renderer.appendBackground({&s1, &s2, &s3, &s4, &s5, &s6, &s7, &s8, &s9, &s10, &s11, &s12});
 
@@ -151,7 +155,7 @@ int main() {
   int boundries[4] = {-500, 1880, 608, 0};
   Boundry boundry(boundries, wc.getWidth(), wc.getHeight());
 
-  GameController gc(&block, hitboxList, {}, {&takeDmgTrigger, &victoryTriggerZone}, &cam, &boundry, 1250);
+  GameController gc(&block, hitboxList, {&enemy}, {&takeDmgTrigger, &victoryTriggerZone}, &cam, &boundry, 1250);
   gc.setLastTick();
 
   // stop rendering block after it's death
@@ -302,6 +306,27 @@ int main() {
   quitConfirm.onClick = [&]() {
     running = false;
   };
+
+  // Enemy script
+
+  enemy.moveRight();
+  float enemyTimeCounter = 0;
+  enemy.setOnUpdate([&](float timespan) {
+    enemyTimeCounter += timespan;
+
+    if (enemyTimeCounter >= 3) {
+      if (enemy.isMovingLeft()) {
+        enemy.setMovingLeft(false);
+        enemy.moveRight();
+      } else {
+        enemy.setMovingRight(false);
+        enemy.moveLeft();
+      }
+
+      enemyTimeCounter = 0;
+      cout << "enemy movement changed!" << endl;
+    }
+  });
 
   while (running && wc.processMessages()) {
     wc.redraw();

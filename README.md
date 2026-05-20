@@ -133,6 +133,7 @@ c_mulation/
 │   │   ├── hitboxObject.h
 │   │   ├── mob.h
 │   │   ├── object.h
+│   │   ├── scriptedMob.h
 │   │   ├── triggerZone.h
 │   │   ├── triggerZone.tpp
 │   │   ├── triggerZoneBase.h
@@ -167,7 +168,8 @@ c_mulation/
 │   │   ├── entity.cpp
 │   │   ├── hitboxObject.cpp
 │   │   ├── mob.cpp
-│   │   └── object.cpp
+│   │   ├── object.cpp
+│   │   └── scriptedMob.cpp
 │   ├── window/
 │   │   ├── renderer.cpp
 │   │   └── windowController.cpp
